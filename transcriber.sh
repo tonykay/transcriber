@@ -218,13 +218,13 @@ process_transcripts() {
     for txt_file in "${txt_files[@]}"; do
         local filename=$(basename "$txt_file")
         local base_name="${filename%.txt}"
-        local transcript_file="$transcripts_dir/${base_name}-transcript.md"
+        local transcript_file="$transcripts_dir/transcript-${base_name}.md"
         
         echo "Processing: $filename"
         
         # Run ollama transcription
         if cat "$txt_file" | ollama run transcriber:latest | tee "$transcript_file"; then
-            echo "✓ Transcript generated: ${base_name}-transcript.md"
+            echo "✓ Transcript generated: transcript-${base_name}.md"
             
             # Move processed txt file to text-processed directory
             local processed_file="$processed_text_dir/$filename"

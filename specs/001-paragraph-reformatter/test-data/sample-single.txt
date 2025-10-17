@@ -1,0 +1,1 @@
+This is a single sentence that should be returned unchanged without any paragraph breaks added.

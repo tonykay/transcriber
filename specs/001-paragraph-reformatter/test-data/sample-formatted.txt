@@ -1,0 +1,7 @@
+This is a sample text that already has proper paragraph formatting. Each paragraph addresses a distinct topic and has appropriate breaks.
+
+The first paragraph introduced the context and purpose of this test sample. Now we move to a different topic entirely.
+
+This second paragraph discusses something completely different. It demonstrates that existing paragraph structure should be preserved when the text is already well-formatted.
+
+The final paragraph concludes the sample. It verifies that the reformatter can recognize when text doesn't need modification and returns it with minimal changes to the existing structure.

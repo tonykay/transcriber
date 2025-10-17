@@ -1,1 +1,25 @@
+# IDEs
 .vscode
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+log/
+
+# Test outputs (for paragraph reformatter validation)
+specs/*/test-data/output-*.txt
+
+# Temporary files
+*.bak
+*~

@@ -1,0 +1,1 @@
+This is a short sample text for testing the paragraph reformatter. It contains only a few sentences. The reformatter should not over-segment this text. It should recognize that this is already an appropriate length for a single paragraph. There is no need to add unnecessary breaks. The output should maintain this compact structure.

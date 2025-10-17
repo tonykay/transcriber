@@ -196,6 +196,34 @@ transcribe_audio_files
 process_transcripts
 ```
 
+### Paragraph Reformatter (Optional)
+
+The `transcriber-reformat` model is an optional tool for reformatting raw transcription text into well-structured paragraphs. This is useful when you have continuous text from speech-to-text output that lacks proper paragraph breaks.
+
+**Setup:**
+```bash
+# Create the reformatter model (one-time setup)
+ollama create transcriber-reformat -f Modelfiles/Modelfile-reformat
+```
+
+**Usage:**
+```bash
+# Reformat a transcript file
+ollama run transcriber-reformat < input.txt > output.txt
+
+# Or process files from the pipeline
+ollama run transcriber-reformat < ~/Resources/Transcripts/text-unprocessed/2025-07-02-17:54:46.txt > reformatted.txt
+```
+
+**Features:**
+- Identifies logical topic shifts and natural content breaks
+- Adds paragraph breaks while preserving 100% of original content
+- Handles technical content (URLs, code blocks, special characters)
+- Works with text of any length (short notes to lengthy transcripts)
+- Temperature: 0.1 for maximum consistency
+
+**Important:** The reformatter ONLY adds paragraph breaks - it never modifies, adds, or removes words. All original content is preserved exactly.
+
 ### Customizing Ollama Model
 
 Edit the script to use a different Ollama model:

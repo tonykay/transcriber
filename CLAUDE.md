@@ -9,6 +9,7 @@ DJI Transcriber - A complete pipeline for processing DJI audio recordings into f
 - **Dependencies**:
   - Parakeet MLX (speech-to-text)
   - Ollama with custom `transcriber` model (text enhancement)
+  - Ollama `transcriber-reformat` model (optional paragraph formatting)
 
 ## Key Functions
 - `process_dji_audio()` - Import & rename DJI audio files
@@ -48,6 +49,24 @@ bash -n transcriber.sh
 - ✅ Custom Ollama model configuration
 - ✅ Error handling and batch processing
 - ✅ Clean git repository
+- ✅ **Complete**: Paragraph Reformatter Modelfile (feature: 001-paragraph-reformatter)
+
+## Additional Tools
+
+### Paragraph Reformatter (`transcriber-reformat` model)
+Optional tool for formatting raw text into structured paragraphs with 100% content preservation.
+
+- **Location**: `Modelfiles/Modelfile-reformat`
+- **Model**: llama3.3:70b (42 GB, temperature 0.1 for maximum determinism)
+- **Usage**: `ollama run transcriber-reformat < input.txt > output.txt`
+- **Helper Script**: `scripts/reformat-transcript.sh` (batch processing support)
+- **Documentation**: `specs/001-paragraph-reformatter/`
+- **Features**:
+  - Identifies logical topic shifts and adds paragraph breaks
+  - Preserves 100% of original content (no words added/removed/modified)
+  - Handles technical content (code blocks, URLs, special characters)
+  - Works with any text length (short notes to lengthy transcripts)
+- **Validation**: Full test suite with preservation and quality checks
 
 ## Next Development Areas
 - Enhanced error recovery

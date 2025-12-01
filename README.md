@@ -233,6 +233,18 @@ Edit the script to use a different Ollama model:
 ollama run your-custom-model:latest
 ```
 
+## Development
+
+### Project Context
+
+This project uses `AGENTS.md` (symlinked as `CLAUDE.md`) to provide development context for AI coding assistants. The file contains:
+- Project architecture overview
+- Key functions and directory structure
+- Development commands and current status
+- Documentation on optional tools (paragraph reformatter)
+
+The symbolic link ensures compatibility with tools that expect `CLAUDE.md` while maintaining a more descriptive filename.
+
 ## Contributing
 
 1. Fork the repository

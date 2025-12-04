@@ -1,4 +1,6 @@
-FROM qwen2.5:72b-instruct
+FROM llama3.3:70b
+
+# qwen2.5:72b-instruct
 
 # tok, for formatting the output of whisper etc
 

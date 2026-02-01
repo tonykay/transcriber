@@ -40,12 +40,18 @@ def process(
         str | None,
         typer.Option("--config", "-c", help="Path to config file"),
     ] = None,
+    skip_import: Annotated[
+        bool,
+        typer.Option("--skip-import", help="Skip audio import step"),
+    ] = False,
 ) -> None:
     """Run the full transcription pipeline.
 
     Imports audio from DJI device, transcribes, and processes through LLM.
     """
     from pathlib import Path
+
+    from transcriber.pipeline import Pipeline
 
     config_path = Path(config_file) if config_file else None
     config = load_config(config_path)
@@ -56,8 +62,18 @@ def process(
     console.print(f"  STT Provider: {config.stt.provider}")
     console.print(f"  LLM Model: {config.llm.model}")
 
-    # TODO: Implement pipeline steps
-    console.print("[yellow]Pipeline not yet implemented[/yellow]")
+    pipeline = Pipeline(config, console=console)
+    result = pipeline.run(skip_import=skip_import)
+
+    console.print("\n[bold green]Pipeline complete![/bold green]")
+    console.print(f"  Audio imported: {result.audio_imported}")
+    console.print(f"  Transcribed: {result.transcribed}")
+    console.print(f"  Processed: {result.processed}")
+
+    if result.transcribe_failed or result.process_failed:
+        console.print(
+            f"  [yellow]Failures: {result.transcribe_failed + result.process_failed}[/yellow]"
+        )
 
 
 if __name__ == "__main__":

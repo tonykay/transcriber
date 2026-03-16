@@ -12,3 +12,13 @@ provider = "parakeet"
 [llm]
 provider = "ollama"
 model = "transcriber:latest"
+
+[output]
+template = "default.md"
+
+[dictionaries]
+paths = ["dictionaries/tech-terms.yaml"]
+
+[classify]
+enabled = false
+rules_file = "config/classify-rules.yaml"

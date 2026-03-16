@@ -47,12 +47,34 @@ class LLMConfig(BaseModel):
     model: str = "transcriber:latest"
 
 
+class OutputConfig(BaseModel):
+    """Output formatting configuration."""
+
+    template: str = "default.md"
+
+
+class DictionaryConfig(BaseModel):
+    """Dictionary/term correction configuration."""
+
+    paths: list[str] = []
+
+
+class ClassifyConfig(BaseModel):
+    """Auto-classification configuration."""
+
+    enabled: bool = False
+    rules_file: str | None = None
+
+
 class TranscriberConfig(BaseModel):
     """Main configuration for transcriber."""
 
     paths: PathsConfig = PathsConfig()
     stt: STTConfig = STTConfig()
     llm: LLMConfig = LLMConfig()
+    output: OutputConfig = OutputConfig()
+    dictionaries: DictionaryConfig = DictionaryConfig()
+    classify: ClassifyConfig = ClassifyConfig()
 
 
 def load_config(config_path: Path | None = None) -> TranscriberConfig:

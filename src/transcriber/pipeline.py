@@ -7,9 +7,12 @@ from pathlib import Path
 from rich.console import Console
 
 from transcriber.audio import import_dji_audio
+from transcriber.classify import ClassifyRule, classify_text, load_rules, sort_transcript
 from transcriber.config import TranscriberConfig
+from transcriber.dictionary import Dictionary, load_dictionaries
 from transcriber.llm import get_llm_provider
 from transcriber.stt import get_stt_provider
+from transcriber.templates import render_transcript
 
 
 @dataclass
@@ -23,6 +26,7 @@ class PipelineResult:
     transcribe_failed: int = 0
     processed: int = 0
     process_failed: int = 0
+    classified: int = 0
 
     @property
     def total_successful(self) -> int:
@@ -60,6 +64,9 @@ class Pipeline:
         """
         result = PipelineResult()
 
+        # Load dictionary for term correction
+        dictionary = self._load_dictionary()
+
         # Step 1: Import audio from DJI device
         if not skip_import:
             imported, skipped, failed = self._import_audio()
@@ -73,11 +80,31 @@ class Pipeline:
         result.transcribe_failed = transcribe_failed
 
         # Step 3: Process transcripts through LLM
-        processed, process_failed = self._process_transcripts()
+        processed, process_failed = self._process_transcripts(dictionary)
         result.processed = processed
         result.process_failed = process_failed
 
+        # Step 4: Classify transcripts into project directories
+        if self.config.classify.enabled:
+            result.classified = self._classify_transcripts()
+
         return result
+
+    def _load_dictionary(self) -> Dictionary:
+        """Load term correction dictionaries.
+
+        Returns:
+            Merged Dictionary from configured paths.
+        """
+        dict_paths = [Path(p) for p in self.config.dictionaries.paths]
+        if dict_paths:
+            dictionary = load_dictionaries(dict_paths)
+            if dictionary.corrections:
+                self.console.print(
+                    f"  Loaded {len(dictionary.corrections)} term corrections"
+                )
+            return dictionary
+        return Dictionary()
 
     def _import_audio(self) -> tuple[int, int, int]:
         """Import audio files from DJI device.
@@ -152,8 +179,11 @@ class Pipeline:
         self.console.print(f"  Transcribed: {transcribed}, Failed: {failed}")
         return transcribed, failed
 
-    def _process_transcripts(self) -> tuple[int, int]:
-        """Process transcripts through LLM.
+    def _process_transcripts(self, dictionary: Dictionary | None = None) -> tuple[int, int]:
+        """Process transcripts through LLM, apply corrections and template.
+
+        Args:
+            dictionary: Optional Dictionary for term corrections.
 
         Returns:
             Tuple of (processed, failed) counts
@@ -197,7 +227,23 @@ class Pipeline:
 
             result = provider.process(text_file, output_file)
 
-            if result.success:
+            if result.success and result.output_file:
+                # Apply dictionary corrections
+                if dictionary and dictionary.corrections:
+                    content = result.output_file.read_text()
+                    corrected = dictionary.apply(content)
+                    result.output_file.write_text(corrected)
+
+                # Apply template formatting
+                content = result.output_file.read_text()
+                metadata = {"source_file": text_file.name}
+                rendered = render_transcript(
+                    content,
+                    template_name=self.config.output.template,
+                    metadata=metadata,
+                )
+                result.output_file.write_text(rendered)
+
                 # Move text to processed directory
                 shutil.move(str(text_file), str(processed_text_dir / text_file.name))
                 processed += 1
@@ -208,3 +254,42 @@ class Pipeline:
 
         self.console.print(f"  Processed: {processed}, Failed: {failed}")
         return processed, failed
+
+    def _classify_transcripts(self) -> int:
+        """Classify finished transcripts into project directories.
+
+        Returns:
+            Number of transcripts classified.
+        """
+        self.console.print("\n[bold]Classifying transcripts...[/bold]")
+
+        rules_file = self.config.classify.rules_file
+        if not rules_file:
+            self.console.print("  No classification rules file configured")
+            return 0
+
+        rules_path = Path(rules_file)
+        if not rules_path.exists():
+            self.console.print(f"  [yellow]Rules file not found: {rules_file}[/yellow]")
+            return 0
+
+        rules = load_rules(rules_path)
+        output_dir = Path(self.config.paths.transcripts)
+        projects_dir = Path(self.config.paths.base).expanduser() / "projects"
+
+        transcript_files = list(output_dir.glob("*.md"))
+        if not transcript_files:
+            self.console.print("  No transcripts to classify")
+            return 0
+
+        classified = 0
+        for transcript in transcript_files:
+            result = sort_transcript(transcript, projects_dir, rules)
+            classified += 1
+            self.console.print(
+                f"  {transcript.name} -> {result.project}/"
+                + (f" (matched: {result.matched_keyword})" if result.matched_keyword else "")
+            )
+
+        self.console.print(f"  Classified: {classified}")
+        return classified

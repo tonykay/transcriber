@@ -1,0 +1,7 @@
+projects:
+  - name: "langchain"
+    keywords: ["langchain", "lang chain", "vector store", "rag", "retrieval augmented"]
+  - name: "openshift"
+    keywords: ["openshift", "kubernetes", "k8s", "container platform"]
+  - name: "ansible"
+    keywords: ["ansible", "playbook", "automation controller"]

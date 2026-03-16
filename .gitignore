@@ -37,6 +37,10 @@ specs/*/test-data/output-*.txt
 *.bak
 *~
 
+# Coverage and generated artifacts
+.coverage
+codebase-map.html
+
 # Auto Claude data directory
 .auto-claude/
 

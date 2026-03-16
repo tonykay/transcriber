@@ -119,24 +119,24 @@ transcriber config --show                   # Show current configuration
 ## Current Status
 
 - **Branch**: `002-python-rewrite`
-- **Phase**: Design and planning
+- **Phase**: Core port complete
 - **Legacy**: Bash implementation preserved in `legacy/transcriber-bash.sh`
 
 ### Completed
 - ✅ Original Bash pipeline (working, in legacy/)
 - ✅ Paragraph reformatter Ollama model
 - ✅ Architecture design
-
-### In Progress
-- 🔄 Python project structure
-- 🔄 Core library implementation
-
-### Planned
-- 📋 Term correction system
-- 📋 Template system
-- 📋 Auto-classification
-- 📋 Configuration management
-- 📋 CLI implementation
+- ✅ Python project structure (uv, pyproject.toml)
+- ✅ Configuration management (Pydantic, TOML)
+- ✅ Audio import module (DJI file handling)
+- ✅ Speech-to-text module (Parakeet provider)
+- ✅ LLM processing module (Ollama provider)
+- ✅ Pipeline orchestration
+- ✅ CLI implementation (Typer + Rich)
+- ✅ Term correction system (YAML dictionaries)
+- ✅ Template system (Jinja2, 4 built-in templates)
+- ✅ Auto-classification (keyword matching, project sorting)
+- ✅ Full test suite (66 tests)
 
 ## Development Commands
 

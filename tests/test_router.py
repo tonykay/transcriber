@@ -125,3 +125,56 @@ def test_route_text_person_multi_word_name():
     result = route_text("Talk to Mary Jane about the project", [_person_intent()])
     assert result.extracted_intents[0].person == "Mary Jane"
     assert result.extracted_intents[0].content == "the project"
+
+
+def test_route_text_embedded_intent():
+    """Should extract embedded trigger from mid-text."""
+    text = (
+        "We should really show the GitOps workflow. "
+        "Todo, ask James about the cluster quota limits. "
+        "Anyway back to the demo flow."
+    )
+    result = route_text(text, [_todo_intent(), _person_intent()])
+    assert result.primary_intent is None  # no start trigger
+    assert len(result.extracted_intents) == 1
+    intent = result.extracted_intents[0]
+    assert intent.type == "todo"
+    assert intent.position == "embedded"
+    assert intent.person == "James"
+
+
+def test_route_text_multiple_embedded():
+    """Should extract multiple embedded intents."""
+    text = (
+        "Working on the summit lab. "
+        "Todo buy new cables for the demo. "
+        "Also, reminder to book flights."
+    )
+    result = route_text(text, [_todo_intent()])
+    assert len(result.extracted_intents) == 2
+    assert all(i.position == "embedded" for i in result.extracted_intents)
+
+
+def test_route_text_start_plus_embedded():
+    """Start trigger and embedded trigger should both fire."""
+    text = (
+        "Article idea why voice capture changes everything. "
+        "Oh and todo, buy a new microphone."
+    )
+    result = route_text(text, [_todo_intent(), _article_intent()])
+    assert result.primary_intent == "article_idea"
+    assert len(result.extracted_intents) == 2
+    types = [i.type for i in result.extracted_intents]
+    assert "article_idea" in types
+    assert "todo" in types
+
+
+def test_route_text_embedded_sentence_boundary():
+    """Embedded extraction should stop at sentence boundary."""
+    text = (
+        "General discussion here. "
+        "Reminder check the CI pipeline status. "
+        "Back to regular discussion."
+    )
+    result = route_text(text, [_todo_intent()])
+    assert result.extracted_intents[0].content == "check the CI pipeline status"

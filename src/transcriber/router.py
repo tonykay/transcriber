@@ -1,5 +1,6 @@
 """Two-pass intent router for transcript classification."""
 
+import json
 import re
 from dataclasses import dataclass, field
 
@@ -196,6 +197,17 @@ def _extract_embedded_intents(
     return extracted
 
 
+_CLASSIFY_PROMPT = """Analyze this transcript. Return ONLY valid JSON, no other text:
+{
+  "intents": [{"type": "todo|article_idea|note|blog|none", "content": "extracted text", "position": "start|embedded"}],
+  "suggested_tags": ["#tag1", "#tag2"]
+}
+If no clear intent is detected, return type "none" with empty content.
+
+Transcript:
+"""
+
+
 def route_text(text: str, intents: list[IntentConfig]) -> RoutingResult:
     """Route transcript text through Pass 1 (regex trigger matching).
 
@@ -274,5 +286,63 @@ def route_text(text: str, intents: list[IntentConfig]) -> RoutingResult:
         # No start trigger — scan entire text for embedded intents
         embedded = _extract_embedded_intents(text_stripped, intents)
         result.extracted_intents.extend(embedded)
+
+    return result
+
+
+def route_text_with_fallback(
+    text: str,
+    intents: list[IntentConfig],
+    llm_provider: object | None = None,
+) -> RoutingResult:
+    """Route text with regex Pass 1, falling back to LLM Pass 2.
+
+    Args:
+        text: Transcript text to route.
+        intents: Intent definitions for regex matching.
+        llm_provider: LLM provider with classify(text) method. If None,
+            only regex matching is used.
+
+    Returns:
+        RoutingResult with detected intents.
+    """
+    # Pass 1: regex
+    result = route_text(text, intents)
+
+    # If regex found anything, skip LLM
+    if result.primary_intent or result.extracted_intents:
+        return result
+
+    # Pass 2: LLM fallback
+    if llm_provider is None:
+        return result
+
+    if not llm_provider.is_available():
+        return result
+
+    try:
+        prompt = _CLASSIFY_PROMPT + text
+        llm_result = llm_provider.classify(prompt)
+        data = json.loads(llm_result.stdout)
+
+        suggested_tags = data.get("suggested_tags", [])
+        result.tags.extend(suggested_tags)
+
+        for item in data.get("intents", []):
+            if item.get("type") == "none":
+                continue
+            extracted = ExtractedIntent(
+                type=item["type"],
+                content=item.get("content", ""),
+                trigger="llm-fallback",
+                position=item.get("position", "embedded"),
+                tags=[f"#{item['type']}"],
+            )
+            if item.get("position") == "start":
+                result.primary_intent = item["type"]
+            result.extracted_intents.append(extracted)
+
+    except (json.JSONDecodeError, KeyError, AttributeError):
+        pass
 
     return result

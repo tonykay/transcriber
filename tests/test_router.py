@@ -1,7 +1,10 @@
 """Tests for intent router."""
 
+import json
+from unittest.mock import MagicMock, patch
+
 from transcriber.intents import IntentConfig
-from transcriber.router import ExtractedIntent, RoutingResult, route_text
+from transcriber.router import ExtractedIntent, RoutingResult, route_text, route_text_with_fallback
 
 
 def _todo_intent() -> IntentConfig:
@@ -178,3 +181,76 @@ def test_route_text_embedded_sentence_boundary():
     )
     result = route_text(text, [_todo_intent()])
     assert result.extracted_intents[0].content == "check the CI pipeline status"
+
+
+def test_route_text_with_llm_fallback():
+    """Should use LLM fallback when no regex triggers match."""
+    llm_response = json.dumps({
+        "intents": [{"type": "todo", "content": "review the PR", "position": "embedded"}],
+        "suggested_tags": ["#code_review"],
+    })
+
+    mock_provider = MagicMock()
+    mock_provider.is_available.return_value = True
+    mock_result = MagicMock()
+    mock_result.stdout = llm_response
+    mock_provider.classify.return_value = mock_result
+
+    result = route_text_with_fallback(
+        text="I should probably review that pull request soon.",
+        intents=[_todo_intent()],
+        llm_provider=mock_provider,
+    )
+    assert len(result.extracted_intents) == 1
+    assert result.extracted_intents[0].type == "todo"
+    assert result.extracted_intents[0].content == "review the PR"
+
+
+def test_route_text_with_llm_fallback_no_intent():
+    """LLM fallback returning 'none' should produce empty result."""
+    llm_response = json.dumps({
+        "intents": [{"type": "none", "content": "", "position": "start"}],
+        "suggested_tags": ["#general"],
+    })
+
+    mock_provider = MagicMock()
+    mock_provider.is_available.return_value = True
+    mock_result = MagicMock()
+    mock_result.stdout = llm_response
+    mock_provider.classify.return_value = mock_result
+
+    result = route_text_with_fallback(
+        text="Just chatting about the weather today.",
+        intents=[_todo_intent()],
+        llm_provider=mock_provider,
+    )
+    assert result.primary_intent is None
+    assert result.extracted_intents == []
+    assert "#general" in result.tags
+
+
+def test_route_text_with_llm_fallback_skipped_when_regex_matches():
+    """LLM fallback should NOT fire when regex already matched."""
+    mock_provider = MagicMock()
+
+    result = route_text_with_fallback(
+        text="Todo buy groceries",
+        intents=[_todo_intent()],
+        llm_provider=mock_provider,
+    )
+    assert result.primary_intent == "todo"
+    mock_provider.classify.assert_not_called()
+
+
+def test_route_text_with_fallback_unavailable_llm():
+    """Should return regex-only result when LLM is unavailable."""
+    mock_provider = MagicMock()
+    mock_provider.is_available.return_value = False
+
+    result = route_text_with_fallback(
+        text="Some text with no triggers.",
+        intents=[_todo_intent()],
+        llm_provider=mock_provider,
+    )
+    assert result.primary_intent is None
+    assert result.extracted_intents == []

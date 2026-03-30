@@ -57,6 +57,10 @@ def process(
         bool,
         typer.Option("--sort", help="Auto-classify transcripts into projects"),
     ] = False,
+    no_llm_fallback: Annotated[
+        bool,
+        typer.Option("--no-llm-fallback", help="Disable LLM fallback for intent routing"),
+    ] = False,
 ) -> None:
     """Run the full transcription pipeline.
 
@@ -74,6 +78,8 @@ def process(
         config.dictionaries.paths.append(dictionary)
     if sort:
         config.classify.enabled = True
+    if no_llm_fallback:
+        config.router.llm_fallback = False
 
     console.print("[bold blue]Starting transcription pipeline...[/bold blue]")
     console.print(f"  DJI Source: {config.paths.dji_source}")
@@ -92,6 +98,9 @@ def process(
 
     if result.classified:
         console.print(f"  Classified: {result.classified}")
+
+    if result.routed:
+        console.print(f"  Routed: {result.routed}")
 
     if result.transcribe_failed or result.process_failed:
         console.print(

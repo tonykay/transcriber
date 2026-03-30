@@ -71,3 +71,9 @@ def test_cli_reformat_applies_template(tmp_path: Path):
     content = transcript.read_text()
     assert "Summary" in content
     assert "My transcript content." in content
+
+
+def test_cli_process_no_llm_fallback_flag():
+    """CLI should accept --no-llm-fallback flag."""
+    result = runner.invoke(app, ["process", "--help"])
+    assert "--no-llm-fallback" in result.output

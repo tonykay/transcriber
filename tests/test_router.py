@@ -86,3 +86,42 @@ def test_route_text_intent_tags():
     """Extracted intent should include type as a tag."""
     result = route_text("Todo buy milk", [_todo_intent()])
     assert "#todo" in result.extracted_intents[0].tags
+
+
+def _person_intent() -> IntentConfig:
+    return IntentConfig(
+        type="todo",
+        triggers=["speak to {person} about", "ask {person} about", "talk to {person} about", "tell {person} about"],
+        output="append",
+        target="todos.md",
+        extract={"person": "frontmatter"},
+    )
+
+
+def test_route_text_person_extraction():
+    """Should extract person name from 'speak to {person} about' trigger."""
+    result = route_text("Speak to John about attending KubeCon", [_person_intent()])
+    assert result.primary_intent == "todo"
+    assert result.extracted_intents[0].person == "John"
+    assert result.extracted_intents[0].content == "attending KubeCon"
+    assert "#john" in result.extracted_intents[0].tags
+
+
+def test_route_text_person_ask_variant():
+    """Should handle 'ask {person} about' variant."""
+    result = route_text("Ask Sarah about the deployment timeline", [_person_intent()])
+    assert result.extracted_intents[0].person == "Sarah"
+    assert result.extracted_intents[0].content == "the deployment timeline"
+
+
+def test_route_text_person_case_insensitive():
+    """Person extraction trigger should be case-insensitive."""
+    result = route_text("TELL james about the new API", [_person_intent()])
+    assert result.extracted_intents[0].person == "james"
+
+
+def test_route_text_person_multi_word_name():
+    """Should extract multi-word names before stop word."""
+    result = route_text("Talk to Mary Jane about the project", [_person_intent()])
+    assert result.extracted_intents[0].person == "Mary Jane"
+    assert result.extracted_intents[0].content == "the project"

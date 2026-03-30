@@ -34,6 +34,31 @@ def _has_person_placeholder(trigger: str) -> bool:
     return "{person}" in trigger
 
 
+_PERSON_STOP_WORDS = ("about", "regarding", "that")
+
+
+def _build_person_pattern(trigger: str) -> re.Pattern[str]:
+    """Build a regex pattern for a trigger with {person} placeholder.
+
+    The {person} group captures one or more capitalized words (a name)
+    up to a stop word like 'about', 'regarding', 'that'.
+    """
+    parts = trigger.split("{person}")
+    before = re.escape(parts[0].strip())
+    after = parts[1].strip() if len(parts) > 1 else ""
+    after_escaped = re.escape(after).strip()
+
+    return re.compile(
+        r"(?:^|(?<=\.\s)|(?<=\?\s)|(?<=!\s)|(?<=\n))"
+        r"\s*"
+        rf"(?P<trigger_before>{before})\s+"
+        r"(?P<person>[\w\s]+?)\s+"
+        rf"{after_escaped}\s*"
+        r"(?P<content>.*)",
+        re.IGNORECASE | re.DOTALL,
+    )
+
+
 def _build_simple_pattern(trigger: str) -> re.Pattern[str]:
     """Build a regex pattern for a simple (non-person) trigger.
 
@@ -85,7 +110,30 @@ def route_text(text: str, intents: list[IntentConfig]) -> RoutingResult:
 
     # Separate simple triggers from person-extraction triggers
     simple_intents = [i for i in intents if not any(_has_person_placeholder(t) for t in i.triggers)]
-    # Person intents handled in Task 5
+    person_intents = [i for i in intents if any(_has_person_placeholder(t) for t in i.triggers)]
+
+    # Check person-extraction triggers first (more specific)
+    for intent in person_intents:
+        for trigger in intent.triggers:
+            if not _has_person_placeholder(trigger):
+                continue
+            pattern = _build_person_pattern(trigger)
+            match = pattern.match(text_stripped)
+            if match:
+                person = match.group("person").strip()
+                content = match.group("content").strip()
+                tags = [f"#{intent.type}", f"#{person.lower().replace(' ', '_')}"]
+                extracted = ExtractedIntent(
+                    type=intent.type,
+                    content=content,
+                    trigger=trigger.lower(),
+                    person=person,
+                    position="start",
+                    tags=tags,
+                )
+                result.primary_intent = intent.type
+                result.extracted_intents.append(extracted)
+                return result
 
     # Check for start-of-text triggers
     for intent in simple_intents:

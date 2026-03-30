@@ -98,6 +98,23 @@ class OllamaProvider(LLMProvider):
                 error="ollama not found",
             )
 
+    def classify(self, prompt: str) -> subprocess.CompletedProcess[str]:
+        """Send a classification prompt to ollama.
+
+        Args:
+            prompt: The classification prompt text.
+
+        Returns:
+            CompletedProcess with stdout containing the LLM response.
+        """
+        return subprocess.run(
+            ["ollama", "run", self.model],
+            input=prompt,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+
 
 def get_llm_provider(provider_name: str, model: str) -> LLMProvider:
     """Get an LLM provider by name.

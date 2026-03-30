@@ -1,6 +1,7 @@
 """Tests for LLM processing module."""
 
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -40,3 +41,22 @@ def test_process_result_dataclass() -> None:
     )
     assert result.success
     assert result.error is None
+
+
+def test_ollama_classify_sends_prompt() -> None:
+    """classify() should send the prompt to ollama and return result."""
+    provider = OllamaProvider(model="transcriber:latest")
+
+    mock_result = MagicMock()
+    mock_result.stdout = '{"intents": [], "suggested_tags": []}'
+    mock_result.returncode = 0
+
+    with patch("subprocess.run", return_value=mock_result) as mock_run:
+        with patch("shutil.which", return_value="/usr/bin/ollama"):
+            result = provider.classify("Analyze this text")
+
+    assert result.stdout == '{"intents": [], "suggested_tags": []}'
+    mock_run.assert_called_once()
+    call_args = mock_run.call_args
+    assert call_args[0][0] == ["ollama", "run", "transcriber:latest"]
+    assert call_args[1]["input"] == "Analyze this text"

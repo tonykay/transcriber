@@ -55,7 +55,7 @@ def load_rules(path: Path) -> list[ClassifyRule]:
     return rules
 
 
-def classify_text(text: str, rules: list[ClassifyRule]) -> tuple[str, str | None]:
+def classify_text(text: str, rules: list[ClassifyRule]) -> tuple[str, str | None, list[str]]:
     """Classify text content against rules.
 
     Checks text against each rule's keywords (case-insensitive).
@@ -66,17 +66,22 @@ def classify_text(text: str, rules: list[ClassifyRule]) -> tuple[str, str | None
         rules: Classification rules to check against.
 
     Returns:
-        Tuple of (project_name, matched_keyword). Project defaults to "misc"
-        if no rules match.
+        Tuple of (project_name, matched_keyword, tags).
     """
     text_lower = text.lower()
 
     for rule in rules:
         for keyword in rule.keywords:
             if keyword.lower() in text_lower:
-                return rule.project, keyword
+                tags = [f"#{rule.project.replace('-', '_')}"]
+                for kw in rule.keywords:
+                    if kw.lower() in text_lower:
+                        tag = f"#{kw.lower().replace(' ', '_').replace('-', '_')}"
+                        if tag not in tags:
+                            tags.append(tag)
+                return rule.project, keyword, tags
 
-    return "misc", None
+    return "misc", None, []
 
 
 def sort_transcript(
@@ -97,7 +102,7 @@ def sort_transcript(
         ClassifyResult with classification details.
     """
     text = file.read_text()
-    project, keyword = classify_text(text, rules)
+    project, keyword, _tags = classify_text(text, rules)
 
     dest_dir = projects_dir / project
     dest_dir.mkdir(parents=True, exist_ok=True)

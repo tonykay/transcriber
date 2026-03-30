@@ -11,7 +11,7 @@ def test_classify_text_matches_keyword():
         ClassifyRule(project="langchain", keywords=["langchain", "vector store"]),
         ClassifyRule(project="openshift", keywords=["openshift", "k8s"]),
     ]
-    project, keyword = classify_text("Today I worked on LangChain agents.", rules)
+    project, keyword, _tags = classify_text("Today I worked on LangChain agents.", rules)
     assert project == "langchain"
     assert keyword == "langchain"
 
@@ -19,14 +19,14 @@ def test_classify_text_matches_keyword():
 def test_classify_text_case_insensitive():
     """Keyword matching should be case-insensitive."""
     rules = [ClassifyRule(project="k8s", keywords=["kubernetes"])]
-    project, keyword = classify_text("Deployed on KUBERNETES cluster.", rules)
+    project, keyword, _tags = classify_text("Deployed on KUBERNETES cluster.", rules)
     assert project == "k8s"
 
 
 def test_classify_text_no_match_returns_misc():
     """Should return 'misc' when no rules match."""
     rules = [ClassifyRule(project="langchain", keywords=["langchain"])]
-    project, keyword = classify_text("Just a random note about my day.", rules)
+    project, keyword, _tags = classify_text("Just a random note about my day.", rules)
     assert project == "misc"
     assert keyword is None
 
@@ -37,13 +37,13 @@ def test_classify_text_first_match_wins():
         ClassifyRule(project="first", keywords=["python"]),
         ClassifyRule(project="second", keywords=["python"]),
     ]
-    project, _ = classify_text("Learning python today.", rules)
+    project, _, _tags = classify_text("Learning python today.", rules)
     assert project == "first"
 
 
 def test_classify_text_empty_rules():
     """Empty rules should classify everything as misc."""
-    project, keyword = classify_text("Anything here.", [])
+    project, keyword, tags = classify_text("Anything here.", [])
     assert project == "misc"
     assert keyword is None
 
@@ -109,3 +109,24 @@ def test_sort_transcript_copy_mode(tmp_path: Path):
 
     assert result.destination.exists()
     assert transcript.exists()  # original preserved
+
+
+def test_classify_text_returns_tags():
+    """Should return tags from matched keywords."""
+    rules = [
+        ClassifyRule(project="summit-lab", keywords=["summit", "agentic", "devops"]),
+    ]
+    project, keyword, tags = classify_text(
+        "In our Summit Agentic DevOps lab we should add more demos.", rules
+    )
+    assert project == "summit-lab"
+    assert "#summit_lab" in tags
+    assert "#summit" in tags
+
+
+def test_classify_text_no_match_returns_empty_tags():
+    """Should return empty tags when nothing matches."""
+    rules = [ClassifyRule(project="langchain", keywords=["langchain"])]
+    project, keyword, tags = classify_text("Random note about my day.", rules)
+    assert project == "misc"
+    assert tags == []

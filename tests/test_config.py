@@ -35,3 +35,16 @@ def test_load_config_returns_defaults_when_no_file(tmp_path):
     """load_config should return defaults when config file doesn't exist."""
     config = load_config(config_path=tmp_path / "nonexistent.toml")
     assert isinstance(config, TranscriberConfig)
+
+
+def test_paths_use_processing_subdirectory():
+    """Intermediate paths should be under .processing/ subdirectory."""
+    from transcriber.config import PathsConfig
+
+    config = PathsConfig(base="/tmp/transcripts")
+    assert ".processing" in config.audio_unprocessed
+    assert ".processing" in config.audio_processed
+    assert ".processing" in config.text_unprocessed
+    assert ".processing" in config.text_processed
+    # Final output paths should NOT be under .processing
+    assert ".processing" not in config.transcripts

@@ -14,19 +14,19 @@ class PathsConfig(BaseModel):
 
     @property
     def audio_unprocessed(self) -> str:
-        return str(Path(self.base).expanduser() / "audio-unprocessed")
+        return str(Path(self.base).expanduser() / ".processing" / "audio-unprocessed")
 
     @property
     def audio_processed(self) -> str:
-        return str(Path(self.base).expanduser() / "audio-processed")
+        return str(Path(self.base).expanduser() / ".processing" / "audio-processed")
 
     @property
     def text_unprocessed(self) -> str:
-        return str(Path(self.base).expanduser() / "text-unprocessed")
+        return str(Path(self.base).expanduser() / ".processing" / "text-unprocessed")
 
     @property
     def text_processed(self) -> str:
-        return str(Path(self.base).expanduser() / "text-processed")
+        return str(Path(self.base).expanduser() / ".processing" / "text-processed")
 
     @property
     def transcripts(self) -> str:

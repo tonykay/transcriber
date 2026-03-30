@@ -108,7 +108,7 @@ model = "transcriber:latest"
 ''')
 
     # Pre-create audio in the unprocessed directory with correct ISO format
-    audio_unprocessed_dir = temp_dirs["base"] / "audio-unprocessed"
+    audio_unprocessed_dir = temp_dirs["base"] / ".processing" / "audio-unprocessed"
     audio_unprocessed_dir.mkdir(parents=True)
     (audio_unprocessed_dir / "2025-07-02-17:54:46.WAV").write_bytes(b"fake audio data")
 
@@ -167,7 +167,7 @@ model = "transcriber:latest"
 ''')
 
     # Pre-create audio to skip import
-    audio_unprocessed_dir = temp_dirs["base"] / "audio-unprocessed"
+    audio_unprocessed_dir = temp_dirs["base"] / ".processing" / "audio-unprocessed"
     audio_unprocessed_dir.mkdir(parents=True)
     (audio_unprocessed_dir / "2025-07-02-17:54:46.WAV").write_bytes(b"fake audio")
 
@@ -237,8 +237,8 @@ model = "transcriber:latest"
     assert result.exit_code == 0
 
     # Verify key directories were created
-    assert (temp_dirs["base"] / "audio-unprocessed").exists()
-    assert (temp_dirs["base"] / "audio-processed").exists()
-    assert (temp_dirs["base"] / "text-unprocessed").exists() or (
-        temp_dirs["base"] / "text-processed"
+    assert (temp_dirs["base"] / ".processing" / "audio-unprocessed").exists()
+    assert (temp_dirs["base"] / ".processing" / "audio-processed").exists()
+    assert (temp_dirs["base"] / ".processing" / "text-unprocessed").exists() or (
+        temp_dirs["base"] / ".processing" / "text-processed"
     ).exists()

@@ -242,3 +242,126 @@ model = "transcriber:latest"
     assert (temp_dirs["base"] / ".processing" / "text-unprocessed").exists() or (
         temp_dirs["base"] / ".processing" / "text-processed"
     ).exists()
+
+
+def test_router_dispatches_todo_to_file(tmp_path: Path) -> None:
+    """Router should extract a todo and append it to todos.md."""
+    from datetime import datetime
+    from transcriber.dispatch import append_to_file
+    from transcriber.intents import load_intents
+    from transcriber.router import route_text
+
+    # Create intents config
+    intents_file = tmp_path / "intents.yaml"
+    intents_file.write_text("""
+intents:
+  - type: todo
+    triggers:
+      - "todo"
+    output: append
+    target: "todos.md"
+  - type: todo
+    triggers:
+      - "speak to {person} about"
+    output: append
+    target: "todos.md"
+    extract:
+      person: frontmatter
+""")
+    intents = load_intents(intents_file)
+
+    # Route a transcript with a start trigger
+    result = route_text("Todo watch the Nvidia keynote especially the OpenClaw bit", intents)
+    assert result.primary_intent == "todo"
+    assert len(result.extracted_intents) == 1
+
+    # Dispatch the intent
+    todos_file = tmp_path / "todos.md"
+    intent = result.extracted_intents[0]
+    append_to_file(
+        target=todos_file,
+        intent=intent,
+        date=datetime(2026, 3, 30, 14, 32),
+        source="DJI_0042.WAV",
+    )
+
+    content = todos_file.read_text()
+    assert "- [ ]" in content
+    assert "Nvidia keynote" in content
+    assert "DJI_0042.WAV" in content
+
+
+def test_router_extracts_embedded_intents(tmp_path: Path) -> None:
+    """Router should extract embedded todos from a brain dump."""
+    from datetime import datetime
+    from transcriber.dispatch import append_to_file
+    from transcriber.intents import load_intents
+    from transcriber.router import route_text
+
+    intents_file = tmp_path / "intents.yaml"
+    intents_file.write_text("""
+intents:
+  - type: todo
+    triggers:
+      - "todo"
+      - "reminder"
+    output: append
+    target: "todos.md"
+  - type: article_idea
+    triggers:
+      - "article idea"
+    output: file
+    target: "article-ideas/"
+""")
+    intents = load_intents(intents_file)
+
+    text = (
+        "Article idea about voice-first productivity tools. "
+        "They let you capture thoughts on the go. "
+        "Todo check out the latest whisper models. "
+        "Reminder to update the blog."
+    )
+    result = route_text(text, intents)
+
+    assert result.primary_intent == "article_idea"
+    # Should find the start trigger + at least 1 embedded todo
+    todo_intents = [i for i in result.extracted_intents if i.type == "todo"]
+    assert len(todo_intents) >= 1
+
+    # Dispatch todos
+    todos_file = tmp_path / "todos.md"
+    for intent in result.extracted_intents:
+        if intent.type == "todo":
+            append_to_file(
+                target=todos_file,
+                intent=intent,
+                date=datetime(2026, 3, 30, 14, 32),
+                source="DJI_0042.WAV",
+                source_transcript="transcript-DJI_0042.md",
+            )
+
+    if todos_file.exists():
+        content = todos_file.read_text()
+        assert "whisper models" in content.lower() or "update the blog" in content.lower()
+
+
+def test_frontmatter_on_transcript(tmp_path: Path) -> None:
+    """Full transcript should get frontmatter with tags."""
+    from datetime import datetime
+    from transcriber.frontmatter import generate_frontmatter
+
+    fm = generate_frontmatter(
+        date=datetime(2026, 3, 30, 14, 32),
+        source="DJI_0042.WAV",
+        tags=["#article_idea", "#summit_lab", "#ai"],
+        intent="article_idea",
+        project="summit-lab",
+    )
+
+    transcript_text = "This is my transcript about the summit lab."
+    full_output = fm + "\n" + transcript_text
+
+    assert full_output.startswith("---\n")
+    assert "#article_idea" in full_output
+    assert "summit-lab" in full_output
+    assert transcript_text in full_output

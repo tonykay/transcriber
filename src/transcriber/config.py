@@ -66,6 +66,13 @@ class ClassifyConfig(BaseModel):
     rules_file: str | None = None
 
 
+class RouterConfig(BaseModel):
+    """Intent routing configuration."""
+
+    intents_file: str | None = None
+    llm_fallback: bool = True
+
+
 class TranscriberConfig(BaseModel):
     """Main configuration for transcriber."""
 
@@ -75,6 +82,7 @@ class TranscriberConfig(BaseModel):
     output: OutputConfig = OutputConfig()
     dictionaries: DictionaryConfig = DictionaryConfig()
     classify: ClassifyConfig = ClassifyConfig()
+    router: RouterConfig = RouterConfig()
 
 
 def load_config(config_path: Path | None = None) -> TranscriberConfig:

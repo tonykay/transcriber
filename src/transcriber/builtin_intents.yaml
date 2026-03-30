@@ -1,0 +1,41 @@
+intents:
+  - type: todo
+    triggers:
+      - "todo"
+      - "to do"
+      - "reminder"
+    output: append
+    target: "todos.md"
+
+  - type: todo
+    triggers:
+      - "speak to {person} about"
+      - "talk to {person} about"
+      - "ask {person} about"
+      - "tell {person} about"
+    output: append
+    target: "todos.md"
+    extract:
+      person: frontmatter
+
+  - type: article_idea
+    triggers:
+      - "article idea"
+      - "blog idea"
+      - "writing idea"
+    output: file
+    target: "article-ideas/"
+
+  - type: note
+    triggers:
+      - "note"
+      - "quick note"
+    output: append
+    target: "notes.md"
+
+  - type: blog
+    triggers:
+      - "blog post"
+      - "blog draft"
+    output: file
+    target: "blogs/"

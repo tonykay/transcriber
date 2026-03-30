@@ -48,3 +48,10 @@ def test_paths_use_processing_subdirectory():
     assert ".processing" in config.text_processed
     # Final output paths should NOT be under .processing
     assert ".processing" not in config.transcripts
+
+
+def test_router_config_defaults():
+    """RouterConfig should have sensible defaults."""
+    config = TranscriberConfig()
+    assert config.router.llm_fallback is True
+    assert config.router.intents_file is None

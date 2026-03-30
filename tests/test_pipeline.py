@@ -35,11 +35,13 @@ def test_pipeline_run_returns_result():
     with patch.object(pipeline, '_import_audio') as mock_import:
         with patch.object(pipeline, '_transcribe_audio') as mock_transcribe:
             with patch.object(pipeline, '_process_transcripts') as mock_process:
-                mock_import.return_value = (0, 0, 0)
-                mock_transcribe.return_value = (0, 0)
-                mock_process.return_value = (0, 0)
+                with patch.object(pipeline, '_route_and_dispatch') as mock_route:
+                    mock_import.return_value = (0, 0, 0)
+                    mock_transcribe.return_value = (0, 0)
+                    mock_process.return_value = (0, 0)
+                    mock_route.return_value = 0
 
-                result = pipeline.run()
+                    result = pipeline.run()
 
     assert isinstance(result, PipelineResult)
 
@@ -52,11 +54,13 @@ def test_pipeline_run_with_skip_import():
     with patch.object(pipeline, '_import_audio') as mock_import:
         with patch.object(pipeline, '_transcribe_audio') as mock_transcribe:
             with patch.object(pipeline, '_process_transcripts') as mock_process:
-                mock_import.return_value = (0, 0, 0)
-                mock_transcribe.return_value = (0, 0)
-                mock_process.return_value = (0, 0)
+                with patch.object(pipeline, '_route_and_dispatch') as mock_route:
+                    mock_import.return_value = (0, 0, 0)
+                    mock_transcribe.return_value = (0, 0)
+                    mock_process.return_value = (0, 0)
+                    mock_route.return_value = 0
 
-                result = pipeline.run(skip_import=True)
+                    result = pipeline.run(skip_import=True)
 
     mock_import.assert_not_called()
     assert isinstance(result, PipelineResult)
@@ -86,3 +90,18 @@ def test_pipeline_result_default_values():
     assert result.processed == 0
     assert result.process_failed == 0
     assert result.total_successful == 0
+
+
+def test_pipeline_result_includes_routed():
+    """PipelineResult should track routed intent counts."""
+    result = PipelineResult(
+        processed=3,
+        routed=2,
+    )
+    assert result.routed == 2
+
+
+def test_pipeline_result_routed_default():
+    """PipelineResult.routed should default to 0."""
+    result = PipelineResult()
+    assert result.routed == 0

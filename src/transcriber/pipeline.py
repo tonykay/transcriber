@@ -2,6 +2,7 @@
 
 import shutil
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 from rich.console import Console
@@ -10,7 +11,11 @@ from transcriber.audio import import_dji_audio
 from transcriber.classify import ClassifyRule, classify_text, load_rules, sort_transcript
 from transcriber.config import TranscriberConfig
 from transcriber.dictionary import Dictionary, load_dictionaries
+from transcriber.dispatch import append_to_file, write_intent_file
+from transcriber.frontmatter import generate_frontmatter
+from transcriber.intents import IntentConfig, load_builtin_intents, load_intents
 from transcriber.llm import get_llm_provider
+from transcriber.router import route_text_with_fallback
 from transcriber.stt import get_stt_provider
 from transcriber.templates import render_transcript
 
@@ -27,6 +32,7 @@ class PipelineResult:
     processed: int = 0
     process_failed: int = 0
     classified: int = 0
+    routed: int = 0
 
     @property
     def total_successful(self) -> int:
@@ -84,7 +90,10 @@ class Pipeline:
         result.processed = processed
         result.process_failed = process_failed
 
-        # Step 4: Classify transcripts into project directories
+        # Step 4: Route transcripts through intent detection
+        result.routed = self._route_and_dispatch()
+
+        # Step 5: Classify transcripts into project directories
         if self.config.classify.enabled:
             result.classified = self._classify_transcripts()
 
@@ -254,6 +263,117 @@ class Pipeline:
 
         self.console.print(f"  Processed: {processed}, Failed: {failed}")
         return processed, failed
+
+    def _load_intents(self) -> list[IntentConfig]:
+        """Load intent definitions from config or built-in defaults."""
+        if self.config.router.intents_file:
+            intents_path = Path(self.config.router.intents_file).expanduser()
+            if intents_path.exists():
+                return load_intents(intents_path)
+        return load_builtin_intents()
+
+    def _route_and_dispatch(self) -> int:
+        """Route transcripts through intent detection and dispatch outputs."""
+        self.console.print("\n[bold]Routing transcripts...[/bold]")
+
+        output_dir = Path(self.config.paths.transcripts)
+        base_dir = Path(self.config.paths.base).expanduser()
+        intents = self._load_intents()
+
+        # Set up LLM fallback if enabled
+        llm_provider = None
+        if self.config.router.llm_fallback:
+            provider = get_llm_provider(
+                self.config.llm.provider,
+                self.config.llm.model,
+            )
+            if provider.is_available():
+                llm_provider = provider
+
+        transcript_files = list(output_dir.glob("*.md"))
+        if not transcript_files:
+            self.console.print("  No transcripts to route")
+            return 0
+
+        routed = 0
+        for transcript in transcript_files:
+            text = transcript.read_text()
+            source = transcript.stem.replace("transcript-", "") + ".WAV"
+            now = datetime.now()
+
+            result = route_text_with_fallback(text, intents, llm_provider)
+
+            # Run classify for project/tags
+            if self.config.classify.enabled and self.config.classify.rules_file:
+                rules_path = Path(self.config.classify.rules_file)
+                if rules_path.exists():
+                    rules = load_rules(rules_path)
+                    project, _keyword, classify_tags = classify_text(text, rules)
+                    result.project = project
+                    result.tags.extend(classify_tags)
+
+            # Merge intent tags into result tags
+            for intent in result.extracted_intents:
+                result.tags.extend(intent.tags)
+
+            # Deduplicate tags
+            seen: set[str] = set()
+            unique_tags: list[str] = []
+            for tag in result.tags:
+                if tag not in seen:
+                    seen.add(tag)
+                    unique_tags.append(tag)
+            result.tags = unique_tags
+
+            # Add frontmatter to the main transcript
+            fm = generate_frontmatter(
+                date=now,
+                source=source,
+                tags=result.tags,
+                intent=result.primary_intent,
+                project=result.project,
+            )
+            transcript.write_text(fm + "\n" + text)
+
+            # Dispatch extracted intents
+            for intent in result.extracted_intents:
+                intent_config = next(
+                    (i for i in intents if i.type == intent.type), None
+                )
+                if not intent_config:
+                    continue
+
+                if intent_config.output == "append":
+                    target = base_dir / intent_config.target
+                    append_to_file(
+                        target=target,
+                        intent=intent,
+                        date=now,
+                        source=source,
+                        source_transcript=transcript.name if intent.position == "embedded" else None,
+                    )
+                elif intent_config.output == "file":
+                    target_dir = base_dir / intent_config.target
+                    write_intent_file(
+                        target_dir=target_dir,
+                        intent=intent,
+                        date=now,
+                        source=source,
+                        full_text=text,
+                        project=result.project,
+                    )
+
+                routed += 1
+
+            if result.extracted_intents:
+                intent_summary = ", ".join(
+                    f"{i.type}" + (f" ({i.person})" if i.person else "")
+                    for i in result.extracted_intents
+                )
+                self.console.print(f"  {transcript.name} -> {intent_summary}")
+
+        self.console.print(f"  Routed: {routed}")
+        return routed
 
     def _classify_transcripts(self) -> int:
         """Classify finished transcripts into project directories.

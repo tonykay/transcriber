@@ -1,266 +1,237 @@
-# DJI Transcriber
+# Transcriber
 
-A complete pipeline for processing DJI audio recordings into formatted transcripts using automated speech recognition and AI enhancement.
+A Python voice capture and processing system that turns DJI audio recordings into structured, classified markdown documents with smart intent routing.
 
-## Overview
+## What It Does
 
-This tool provides a 3-step automated workflow:
-1. **Import & Rename** - Extract audio files from DJI device and rename with timestamps
-2. **Transcribe** - Convert audio to text using Parakeet MLX
-3. **Process** - Enhance transcripts using Ollama AI
-
-## Features
-
-- 🎤 **DJI Audio Support** - Automatically processes DJI Mic 2 recordings
-- 📁 **Smart File Management** - Organized directory structure with processed file tracking
-- 🔄 **Automated Pipeline** - Run all steps with a single command
-- 📝 **AI Enhancement** - Polish transcripts using Ollama AI models
-- ⚡ **Batch Processing** - Handle multiple recordings simultaneously
-- 🛡️ **Error Handling** - Comprehensive error checking and recovery
-
-## Prerequisites
-
-### Required Software
-
-1. **Parakeet MLX** - For audio transcription
-   ```bash
-   pip install parakeet-mlx
-   ```
-
-2. **Ollama** - For transcript processing
-   ```bash
-   # Install Ollama (visit https://ollama.com for installation instructions)
-   
-   # Create the custom transcriber model using the provided Modelfile
-   ollama create transcriber -f Modelfile
-   ```
-   
-   **Note**: The `transcriber` model is a custom model built from the included `Modelfile` that specializes in formatting speech-to-text transcriptions into well-structured markdown documents. It's based on Qwen2.5:72b-instruct with specific instructions for handling technical terminology and organizing transcribed content.
-
-### Hardware Requirements
-
-- **DJI Mic 2** or compatible DJI audio device
-- **Mac with Apple Silicon** (for Parakeet MLX optimal performance)
-- **Sufficient storage** for audio files and transcripts
+1. **Imports** audio files from your DJI MIC 2 (or any audio source)
+2. **Transcribes** speech to text using Parakeet MLX (Apple Silicon optimized)
+3. **Formats** raw transcripts into clean paragraphs via Ollama LLM
+4. **Routes** recordings by intent -- detects voice triggers like "Todo", "Article idea", "Speak to John about"
+5. **Outputs** Obsidian-compatible markdown with YAML frontmatter and tags
 
 ## Installation
 
-1. Clone or download this repository
-2. Make the script executable:
-   ```bash
-   chmod +x transcriber.sh
-   ```
+### Prerequisites
 
-## Usage
+- Python 3.13+
+- [uv](https://docs.astral.sh/uv/) (Python package manager)
+- [Parakeet MLX](https://github.com/senstella/parakeet-mlx) for speech-to-text
+- [Ollama](https://ollama.com) for LLM processing
 
-### Quick Start (Complete Pipeline)
+### Setup
 
 ```bash
-# Run the complete pipeline
-./transcriber.sh
+# Clone the repository
+git clone <repo-url>
+cd transcriber
+
+# Install in development mode
+uv pip install -e ".[dev]"
+
+# Create the Ollama transcriber model (one-time)
+ollama create transcriber -f Modelfile
 ```
 
-This will automatically:
-1. Import audio files from your DJI device
-2. Transcribe them to text
-3. Process them through AI for enhancement
+After installation, `transcriber` is available as a command on your PATH.
 
-### Manual Step-by-Step
+### Hardware
+
+- **DJI MIC 2** or compatible audio device
+- **Mac with Apple Silicon** (recommended for Parakeet MLX)
+
+## Quick Start
 
 ```bash
-# Load the functions
-source transcriber.sh
+# Plug in your DJI MIC 2, then run:
+transcriber process
+```
 
-# Step 1: Import and rename DJI audio files
-process_dji_audio
+This runs the full pipeline: import, transcribe, format, route, and classify.
 
-# Step 2: Transcribe audio files
-transcribe_audio_files
+## CLI Reference
 
-# Step 3: Process transcripts through Ollama
-process_transcripts
+```bash
+# Full pipeline
+transcriber process
+
+# Skip audio import (files already copied)
+transcriber process --skip-import
+
+# Use a specific template
+transcriber process --template blog
+
+# Add a custom dictionary for term correction
+transcriber process --dictionary my-terms.yaml
+
+# Auto-classify into project directories
+transcriber process --sort
+
+# Disable LLM fallback (regex-only intent routing)
+transcriber process --no-llm-fallback
+
+# Classify a single transcript
+transcriber classify transcript.md --rules rules.yaml
+
+# Reformat with a different template
+transcriber reformat transcript.md --template summary
+
+# Show current configuration
+transcriber config
+
+# List available templates
+transcriber templates
+
+# Show version
+transcriber --version
+```
+
+## Intent Routing
+
+Transcriber detects voice triggers in your recordings and routes them automatically:
+
+| You say... | What happens |
+|------------|-------------|
+| "Todo, review the PR" | Appended to `todos.md` |
+| "Speak to John about KubeCon" | Appended to `todos.md` with `Assigned: John` |
+| "Article idea, voice-first productivity" | Individual file in `article-ideas/` |
+| "Blog post, why agentic DevOps matters" | Individual file in `blogs/` |
+| "Note, remember to check the logs" | Appended to `notes.md` |
+
+Triggers work at the start of a recording (sets the whole file's intent) or **mid-sentence** during a longer brain dump -- embedded todos get extracted automatically.
+
+When no explicit trigger is detected, an optional LLM fallback classifies the recording semantically.
+
+### Custom Triggers
+
+Define your own triggers in `~/.config/transcriber/intents.yaml`:
+
+```yaml
+intents:
+  - type: todo
+    triggers:
+      - "todo"
+      - "reminder"
+    output: append
+    target: "todos.md"
+```
+
+## Output Format
+
+All outputs include YAML frontmatter for Obsidian compatibility:
+
+```yaml
+---
+date: 2026-03-30T14:32:00
+source: DJI_0042.WAV
+tags: ["#article_idea", "#summit_lab", "#ai"]
+intent: article_idea
+project: summit-lab
+---
+
+Your transcript content here...
 ```
 
 ## Directory Structure
 
-The script creates and manages the following directory structure:
-
 ```
 ~/Resources/Transcripts/
-├── audio-unprocessed/     # Raw audio files from DJI device
-├── audio-processed/       # Audio files that have been transcribed
-├── text-unprocessed/      # Raw transcription text files
-├── text-processed/        # Text files processed by Ollama
-└── transcripts/           # Final enhanced markdown transcripts
+├── .processing/              # Hidden intermediate files
+│   ├── audio-unprocessed/
+│   ├── audio-processed/
+│   ├── text-unprocessed/
+│   └── text-processed/
+├── transcripts/              # Full formatted transcripts
+├── projects/                 # Classified by project
+│   ├── summit-lab/
+│   └── misc/
+├── todos.md                  # Captured todos
+├── notes.md                  # Quick notes
+├── article-ideas/            # Article idea recordings
+└── blogs/                    # Blog draft recordings
 ```
 
-## File Naming Convention
+## Configuration
 
-### Audio Files
-- **Input**: `DJI_01_20250702_175446.WAV`
-- **Output**: `2025-07-02-17:54:46.WAV`
+Transcriber looks for config in this order:
+1. `./transcriber.toml` (current directory)
+2. `~/.config/transcriber/config.toml`
+3. Built-in defaults
 
-### Transcript Files
-- **Final Output**: `transcript-2025-07-02-17:54:46.md`
+```toml
+[paths]
+base = "~/Resources/Transcripts"
+dji_source = "/Volumes/DJI_MIC2"
 
-## Workflow Details
+[stt]
+provider = "parakeet"    # or "whisper"
 
-### Step 1: Import & Rename (`process_dji_audio`)
+[llm]
+provider = "ollama"
+model = "transcriber:latest"
 
-- Scans `/Volumes/DJI_MIC2/` for `DJI_Audio_*` directories
-- Extracts `.WAV` files and renames them with ISO timestamp format
-- Moves files to `~/Resources/Transcripts/audio-unprocessed/`
+[output]
+template = "default.md"
 
-### Step 2: Transcribe (`transcribe_audio_files`)
+[router]
+llm_fallback = true
+# intents_file = "~/.config/transcriber/intents.yaml"
 
-- Uses Parakeet MLX to convert audio to text
-- Generates `.txt` files in `~/Resources/Transcripts/text-unprocessed/`
-- Moves processed audio to `~/Resources/Transcripts/audio-processed/`
-
-### Step 3: Process (`process_transcripts`)
-
-- Enhances transcripts using Ollama's `transcriber:latest` model
-- Generates final markdown files in `~/Resources/Transcripts/transcripts/`
-- Moves processed text files to `~/Resources/Transcripts/text-processed/`
-
-## Example Output
-
-```bash
-$ ./transcriber.sh
-Starting DJI Audio File Processor & Transcriber...
-
-STEP 1: Processing DJI audio files...
-=======================================
-Processing directory: DJI_Audio_001
-Processing file: DJI_01_20250702_175446.WAV
-✓ Moved: DJI_01_20250702_175446.WAV -> 2025-07-02-17:54:46.WAV
-
-STEP 2: Transcribing audio files...
-====================================
-Found 1 .WAV files to transcribe
-Processing: 2025-07-02-17:54:46.WAV
-✓ Transcription successful for: 2025-07-02-17:54:46.WAV
-
-STEP 3: Processing transcripts through ollama...
-================================================
-Found 1 .txt files to process through ollama
-Processing: 2025-07-02-17:54:46.txt
-✓ Transcript generated: transcript-2025-07-02-17:54:46.md
+[classify]
+enabled = false
+# rules_file = "~/.config/transcriber/rules.yaml"
 ```
 
-## Troubleshooting
+## Templates
 
-### Common Issues
+Built-in templates: `default.md`, `blog.md`, `trip-report.md`, `summary.md`
 
-1. **"parakeet-mlx command not found"**
-   - Install Parakeet MLX: `pip install parakeet-mlx`
-
-2. **"ollama command not found"**
-   - Install Ollama from https://ollama.com
-   - Install the transcriber model: `ollama pull transcriber:latest`
-
-3. **"Source directory not found"**
-   - Ensure your DJI device is connected and mounted at `/Volumes/DJI_MIC2/`
-
-4. **"No DJI_Audio_* directories found"**
-   - Check that your DJI device has recorded audio files
-   - Verify the device is properly mounted
-
-### Getting Help
-
-```bash
-# View usage information
-./transcriber.sh --help
-
-# Or source the script and run
-source transcriber.sh
-usage
-```
-
-## Advanced Usage
-
-### Processing Specific Steps
-
-You can run individual steps as needed:
-
-```bash
-source transcriber.sh
-
-# Only import audio files
-process_dji_audio
-
-# Only transcribe (if audio files already imported)
-transcribe_audio_files
-
-# Only process transcripts (if text files already generated)
-process_transcripts
-```
-
-### Paragraph Reformatter (Optional)
-
-The `transcriber-reformat` model is an optional tool for reformatting raw transcription text into well-structured paragraphs. This is useful when you have continuous text from speech-to-text output that lacks proper paragraph breaks.
-
-**Setup:**
-```bash
-# Create the reformatter model (one-time setup)
-ollama create transcriber-reformat -f Modelfiles/Modelfile-reformat
-```
-
-**Usage:**
-```bash
-# Reformat a transcript file
-ollama run transcriber-reformat < input.txt > output.txt
-
-# Or process files from the pipeline
-ollama run transcriber-reformat < ~/Resources/Transcripts/text-unprocessed/2025-07-02-17:54:46.txt > reformatted.txt
-```
-
-**Features:**
-- Identifies logical topic shifts and natural content breaks
-- Adds paragraph breaks while preserving 100% of original content
-- Handles technical content (URLs, code blocks, special characters)
-- Works with text of any length (short notes to lengthy transcripts)
-- Temperature: 0.1 for maximum consistency
-
-**Important:** The reformatter ONLY adds paragraph breaks - it never modifies, adds, or removes words. All original content is preserved exactly.
-
-### Customizing Ollama Model
-
-Edit the script to use a different Ollama model:
-
-```bash
-# Change this line in the process_transcripts function
-ollama run your-custom-model:latest
-```
+Add custom templates to `~/.config/transcriber/templates/`.
 
 ## Development
 
-### Project Context
+```bash
+# Run tests (118 tests)
+uv run pytest
 
-This project uses `AGENTS.md` (symlinked as `CLAUDE.md`) to provide development context for AI coding assistants. The file contains:
-- Project architecture overview
-- Key functions and directory structure
-- Development commands and current status
-- Documentation on optional tools (paragraph reformatter)
+# Run tests with coverage
+uv run pytest --cov
 
-The symbolic link ensures compatibility with tools that expect `CLAUDE.md` while maintaining a more descriptive filename.
+# Type checking
+uv run mypy src/
 
-## Contributing
+# Linting
+uv run ruff check src/
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+# Run CLI during development (without installing)
+uv run transcriber process
+```
 
-## License
+## Architecture
 
-This project is provided as-is for personal and educational use.
+```
+src/transcriber/
+├── cli.py              # CLI entry point (Typer + Rich)
+├── config.py           # Configuration (Pydantic V2, TOML)
+├── pipeline.py         # Pipeline orchestration
+├── audio.py            # DJI audio import
+├── stt.py              # Speech-to-text (Parakeet provider)
+├── llm.py              # LLM processing (Ollama provider)
+├── dictionary.py       # Term correction (YAML dictionaries)
+├── templates.py        # Output formatting (Jinja2)
+├── router.py           # Intent detection (regex + LLM fallback)
+├── intents.py          # Intent config loading
+├── frontmatter.py      # YAML frontmatter generation
+├── dispatch.py         # Output routing (append/file)
+├── classify.py         # Project classification
+├── builtin_intents.yaml
+└── builtin_templates/
+    ├── default.md
+    ├── blog.md
+    ├── trip-report.md
+    └── summary.md
+```
 
-## Support
+## Legacy
 
-For issues and questions:
-1. Check the troubleshooting section
-2. Review the error messages carefully
-3. Ensure all prerequisites are installed
-4. Verify your DJI device is properly connected 
+The original Bash implementation is preserved in `legacy/transcriber-bash.sh`.

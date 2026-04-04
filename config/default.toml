@@ -1,0 +1,24 @@
+# Transcriber default configuration
+# Copy to ~/.config/transcriber/config.toml to customize
+
+[paths]
+base = "~/Resources/Transcripts"
+dji_source = "/Volumes/DJI_MIC2"
+
+[stt]
+provider = "parakeet"
+# model = "custom-model"  # Optional: provider-specific model
+
+[llm]
+provider = "ollama"
+model = "transcriber:latest"
+
+[output]
+template = "default.md"
+
+[dictionaries]
+paths = ["dictionaries/tech-terms.yaml"]
+
+[classify]
+enabled = false
+rules_file = "config/classify-rules.yaml"

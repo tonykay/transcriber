@@ -1,3 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+.venv/
+
 # IDEs
 .vscode
 .idea/
@@ -23,3 +36,18 @@ specs/*/test-data/output-*.txt
 # Temporary files
 *.bak
 *~
+
+# Coverage and generated artifacts
+.coverage
+codebase-map.html
+
+# Auto Claude data directory
+.auto-claude/
+
+# Auto Claude generated files
+.auto-claude-security.json
+.auto-claude-status
+.claude_settings.json
+.worktrees/
+.security-key
+logs/security/

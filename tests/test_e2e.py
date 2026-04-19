@@ -110,7 +110,7 @@ model = "transcriber:latest"
     # Pre-create audio in the unprocessed directory with correct ISO format
     audio_unprocessed_dir = temp_dirs["base"] / ".processing" / "audio-unprocessed"
     audio_unprocessed_dir.mkdir(parents=True)
-    (audio_unprocessed_dir / "2025-07-02-17:54:46.WAV").write_bytes(b"fake audio data")
+    (audio_unprocessed_dir / "2025-07-02-17-54-46.WAV").write_bytes(b"fake audio data")
 
     def mock_subprocess(*args: Any, **kwargs: Any) -> MagicMock:
         """Mock subprocess.run for STT and LLM."""
@@ -169,7 +169,7 @@ model = "transcriber:latest"
     # Pre-create audio to skip import
     audio_unprocessed_dir = temp_dirs["base"] / ".processing" / "audio-unprocessed"
     audio_unprocessed_dir.mkdir(parents=True)
-    (audio_unprocessed_dir / "2025-07-02-17:54:46.WAV").write_bytes(b"fake audio")
+    (audio_unprocessed_dir / "2025-07-02-17-54-46.WAV").write_bytes(b"fake audio")
 
     # Return None for parakeet-mlx (not installed)
     def mock_which(cmd: str) -> str | None:

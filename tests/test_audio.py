@@ -26,7 +26,7 @@ def test_parse_dji_filename_invalid() -> None:
 def test_rename_dji_file() -> None:
     """Should convert DJI filename to ISO format."""
     result = rename_dji_file("DJI_01_20250702_175446.WAV")
-    assert result == "2025-07-02-17:54:46.WAV"
+    assert result == "2025-07-02-17-54-46.WAV"
 
 
 def test_rename_dji_file_invalid_returns_none() -> None:
@@ -64,7 +64,7 @@ def test_import_dji_audio_renames_correctly(tmp_path: Path) -> None:
 
     import_dji_audio(source_base=source, dest_dir=dest)
 
-    expected_file = dest / "2025-07-02-17:54:46.WAV"
+    expected_file = dest / "2025-07-02-17-54-46.WAV"
     assert expected_file.exists()
 
 
@@ -79,7 +79,7 @@ def test_import_dji_audio_skips_existing(tmp_path: Path) -> None:
     (dji_dir / "DJI_01_20250702_175446.WAV").write_bytes(b"fake audio")
 
     # Pre-create destination file
-    (dest / "2025-07-02-17:54:46.WAV").write_bytes(b"existing")
+    (dest / "2025-07-02-17-54-46.WAV").write_bytes(b"existing")
 
     result = import_dji_audio(source_base=source, dest_dir=dest)
 

@@ -62,13 +62,13 @@ def rename_dji_file(filename: str) -> str | None:
         filename: DJI filename (e.g., "DJI_01_20250702_175446.WAV")
 
     Returns:
-        ISO format filename (e.g., "2025-07-02-17:54:46.WAV") or None if invalid.
+        ISO format filename (e.g., "2025-07-02-17-54-46.WAV") or None if invalid.
     """
     parts = parse_dji_filename(filename)
     if not parts:
         return None
 
-    return f"{parts.year}-{parts.month}-{parts.day}-{parts.hour}:{parts.minute}:{parts.second}.WAV"
+    return f"{parts.year}-{parts.month}-{parts.day}-{parts.hour}-{parts.minute}-{parts.second}.WAV"
 
 
 def import_dji_audio(

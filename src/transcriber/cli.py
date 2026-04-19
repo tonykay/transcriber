@@ -252,7 +252,8 @@ def models() -> None:
     for mf in modelfiles:
         name = mf.stem.replace("-transcriber", "")
         ollama_name = f"transcriber-{name}:latest"
-        status = "[green]created[/green]" if ollama_name in existing_models else "[dim]not created[/dim]"
+        is_created = ollama_name in existing_models
+        status = "[green]created[/green]" if is_created else "[dim]not created[/dim]"
         base_model = ""
         for line in mf.read_text().splitlines():
             if line.startswith("FROM "):
@@ -260,7 +261,7 @@ def models() -> None:
                 break
         console.print(f"  {name:12s} base={base_model:20s} {status}")
 
-    console.print(f"\nCreate with: [bold]transcriber models-create <name>[/bold]")
+    console.print("\nCreate with: [bold]transcriber models-create <name>[/bold]")
 
 
 @app.command(name="models-create")

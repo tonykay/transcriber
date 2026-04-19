@@ -272,7 +272,12 @@ def models_create(
     ],
 ) -> None:
     """Create an Ollama model from a built-in Modelfile."""
+    import shutil
     import subprocess
+
+    if not shutil.which("ollama"):
+        console.print("[red]ollama not found. Install from https://ollama.com[/red]")
+        raise typer.Exit(1)
 
     modelfile = BUILTIN_MODELFILE_DIR / f"{name}-transcriber.Modelfile"
     if not modelfile.exists():
@@ -296,9 +301,6 @@ def models_create(
         console.print(f"\nTo use: set [bold]model = \"{ollama_name}:latest\"[/bold] in config.toml")
     except subprocess.CalledProcessError as e:
         console.print(f"[red]Failed to create model: {e}[/red]")
-        raise typer.Exit(1)
-    except FileNotFoundError:
-        console.print("[red]ollama not found. Install from https://ollama.com[/red]")
         raise typer.Exit(1)
 
 

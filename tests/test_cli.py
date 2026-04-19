@@ -82,7 +82,8 @@ def test_cli_process_no_llm_fallback_flag():
 
 def test_cli_models_command_exists():
     """CLI should have a models command that lists available Modelfiles."""
-    result = runner.invoke(app, ["models"])
+    with patch("shutil.which", return_value=None):
+        result = runner.invoke(app, ["models"])
     assert result.exit_code == 0
     assert "gemma4" in result.output
     assert "qwen3.5" in result.output

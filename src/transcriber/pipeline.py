@@ -8,7 +8,7 @@ from pathlib import Path
 from rich.console import Console
 
 from transcriber.audio import import_dji_audio
-from transcriber.classify import ClassifyRule, classify_text, load_rules, sort_transcript
+from transcriber.classify import classify_text, load_rules, sort_transcript
 from transcriber.config import TranscriberConfig
 from transcriber.dictionary import Dictionary, load_builtin_dictionaries, load_dictionaries
 from transcriber.dispatch import append_to_file, write_intent_file

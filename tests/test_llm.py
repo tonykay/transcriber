@@ -60,3 +60,44 @@ def test_ollama_classify_sends_prompt() -> None:
     call_args = mock_run.call_args
     assert call_args[0][0] == ["ollama", "run", "transcriber:latest"]
     assert call_args[1]["input"] == "Analyze this text"
+
+
+def test_ollama_process_strips_ansi_escapes(tmp_path) -> None:
+    """process() should strip ANSI escape sequences from Ollama output."""
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("Raw transcript text.")
+    output_file = tmp_path / "output.md"
+
+    ansi_output = "The desired outcomes\x1b[1D\x1b[K\nare completely different\x1b[3D\x1b[K"
+    expected_clean = "The desired outcomes\nare completely different"
+
+    mock_result = MagicMock()
+    mock_result.stdout = ansi_output
+    mock_result.returncode = 0
+
+    provider = OllamaProvider(model="test-model")
+
+    with patch("subprocess.run", return_value=mock_result):
+        result = provider.process(input_file, output_file)
+
+    assert result.success
+    content = output_file.read_text()
+    assert "\x1b" not in content
+    assert content == expected_clean
+
+
+def test_ollama_classify_strips_ansi_escapes() -> None:
+    """classify() should strip ANSI escape sequences from Ollama output."""
+    ansi_output = '{"intent": "todo"}\x1b[1D\x1b[K'
+
+    mock_result = MagicMock()
+    mock_result.stdout = ansi_output
+    mock_result.returncode = 0
+
+    provider = OllamaProvider(model="test-model")
+
+    with patch("subprocess.run", return_value=mock_result):
+        result = provider.classify("Analyze this text")
+
+    assert "\x1b" not in result.stdout
+    assert result.stdout == '{"intent": "todo"}'

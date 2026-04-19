@@ -1,10 +1,13 @@
 """LLM processing providers."""
 
+import re
 import shutil
 import subprocess
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
+
+ANSI_ESCAPE = re.compile(r'\x1b\[[0-9;]*[a-zA-Z]')
 
 
 @dataclass
@@ -74,8 +77,9 @@ class OllamaProvider(LLMProvider):
                 check=True,
             )
 
-            # Write output
-            output_file.write_text(result.stdout)
+            # Write output, stripping ANSI escape sequences
+            cleaned = ANSI_ESCAPE.sub('', result.stdout)
+            output_file.write_text(cleaned)
 
             return ProcessResult(
                 input_file=input_file,
@@ -107,13 +111,15 @@ class OllamaProvider(LLMProvider):
         Returns:
             CompletedProcess with stdout containing the LLM response.
         """
-        return subprocess.run(
+        result = subprocess.run(
             ["ollama", "run", self.model],
             input=prompt,
             capture_output=True,
             text=True,
             check=True,
         )
+        result.stdout = ANSI_ESCAPE.sub('', result.stdout)
+        return result
 
 
 def get_llm_provider(provider_name: str, model: str) -> LLMProvider:

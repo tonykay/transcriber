@@ -214,5 +214,92 @@ def templates() -> None:
         console.print(f"  - {name}")
 
 
+BUILTIN_MODELFILE_DIR = Path(__file__).parent / "builtin_modelfiles"
+
+
+@app.command()
+def models() -> None:
+    """List available Modelfiles for Ollama."""
+    import shutil
+    import subprocess
+
+    if not BUILTIN_MODELFILE_DIR.is_dir():
+        console.print("[red]No built-in Modelfiles found.[/red]")
+        raise typer.Exit(1)
+
+    modelfiles = sorted(BUILTIN_MODELFILE_DIR.glob("*.Modelfile"))
+    if not modelfiles:
+        console.print("[red]No Modelfiles found.[/red]")
+        raise typer.Exit(1)
+
+    # Check which Ollama models exist
+    existing_models: set[str] = set()
+    if shutil.which("ollama"):
+        try:
+            result = subprocess.run(
+                ["ollama", "list"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            for line in result.stdout.splitlines():
+                if line.strip():
+                    existing_models.add(line.split()[0])
+        except subprocess.CalledProcessError:
+            pass
+
+    console.print("[bold]Available Modelfiles:[/bold]")
+    for mf in modelfiles:
+        name = mf.stem.replace("-transcriber", "")
+        ollama_name = f"transcriber-{name}:latest"
+        status = "[green]created[/green]" if ollama_name in existing_models else "[dim]not created[/dim]"
+        base_model = ""
+        for line in mf.read_text().splitlines():
+            if line.startswith("FROM "):
+                base_model = line[5:].strip()
+                break
+        console.print(f"  {name:12s} base={base_model:20s} {status}")
+
+    console.print(f"\nCreate with: [bold]transcriber models-create <name>[/bold]")
+
+
+@app.command(name="models-create")
+def models_create(
+    name: Annotated[
+        str,
+        typer.Argument(help="Model name (e.g., gemma4, qwen3.5, llama3.3)"),
+    ],
+) -> None:
+    """Create an Ollama model from a built-in Modelfile."""
+    import subprocess
+
+    modelfile = BUILTIN_MODELFILE_DIR / f"{name}-transcriber.Modelfile"
+    if not modelfile.exists():
+        available = [
+            f.stem.replace("-transcriber", "")
+            for f in sorted(BUILTIN_MODELFILE_DIR.glob("*.Modelfile"))
+        ]
+        console.print(f"[red]Modelfile not found: {name}[/red]")
+        console.print(f"Available: {', '.join(available)}")
+        raise typer.Exit(1)
+
+    ollama_name = f"transcriber-{name}"
+    console.print(f"Creating Ollama model [bold]{ollama_name}[/bold] from {modelfile.name}...")
+
+    try:
+        subprocess.run(
+            ["ollama", "create", ollama_name, "-f", str(modelfile)],
+            check=True,
+        )
+        console.print(f"[green]Model {ollama_name}:latest created successfully.[/green]")
+        console.print(f"\nTo use: set [bold]model = \"{ollama_name}:latest\"[/bold] in config.toml")
+    except subprocess.CalledProcessError as e:
+        console.print(f"[red]Failed to create model: {e}[/red]")
+        raise typer.Exit(1)
+    except FileNotFoundError:
+        console.print("[red]ollama not found. Install from https://ollama.com[/red]")
+        raise typer.Exit(1)
+
+
 if __name__ == "__main__":
     app()

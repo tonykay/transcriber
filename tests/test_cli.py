@@ -1,6 +1,7 @@
 """Tests for CLI module."""
 
 from pathlib import Path
+from unittest.mock import patch, MagicMock
 
 from typer.testing import CliRunner
 
@@ -77,3 +78,25 @@ def test_cli_process_no_llm_fallback_flag():
     """CLI should accept --no-llm-fallback flag."""
     result = runner.invoke(app, ["process", "--help"])
     assert "--no-llm-fallback" in result.output
+
+
+def test_cli_models_command_exists():
+    """CLI should have a models command that lists available Modelfiles."""
+    result = runner.invoke(app, ["models"])
+    assert result.exit_code == 0
+    assert "gemma4" in result.output
+    assert "qwen3.5" in result.output
+    assert "llama3.3" in result.output
+
+
+def test_cli_models_create_help():
+    """models create should show help with available model names."""
+    result = runner.invoke(app, ["models-create", "--help"])
+    assert result.exit_code == 0
+    assert "name" in result.output.lower()
+
+
+def test_cli_models_create_invalid_name():
+    """models create should reject unknown model names."""
+    result = runner.invoke(app, ["models-create", "nonexistent"])
+    assert result.exit_code != 0 or "not found" in result.output.lower()

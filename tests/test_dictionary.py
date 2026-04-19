@@ -4,7 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from transcriber.dictionary import Dictionary, find_dictionaries, load_dictionary, load_dictionaries
+from transcriber.dictionary import (
+    Dictionary,
+    find_dictionaries,
+    load_builtin_dictionaries,
+    load_dictionary,
+    load_dictionaries,
+)
 
 
 def test_dictionary_apply_simple():
@@ -97,3 +103,18 @@ def test_find_dictionaries(tmp_path: Path):
     assert "terms.yaml" in names
     assert "extra.yml" in names
     assert "ignore.txt" not in names
+
+
+def test_load_builtin_dictionaries():
+    """Should load the built-in Red Hat ecosystem dictionary."""
+    d = load_builtin_dictionaries()
+    assert len(d.corrections) > 0
+    assert d.apply("I used open claw for the demo.") == "I used OpenClaw for the demo."
+
+
+def test_load_builtin_dictionaries_includes_key_terms():
+    """Built-in dictionary should include essential domain terms."""
+    d = load_builtin_dictionaries()
+    assert "OpenShift" in d.apply("We deployed on open shift.")
+    assert "LangChain" in d.apply("I used lang chain.")
+    assert "kubectl" in d.apply("Run cube control get pods.")

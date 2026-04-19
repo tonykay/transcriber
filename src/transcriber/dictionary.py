@@ -7,6 +7,9 @@ from pathlib import Path
 import yaml
 
 
+BUILTIN_DICTIONARY_DIR = Path(__file__).parent / "builtin_dictionaries"
+
+
 @dataclass
 class Dictionary:
     """A collection of term corrections loaded from YAML files.
@@ -90,3 +93,13 @@ def find_dictionaries(search_dirs: list[Path]) -> list[Path]:
             found.extend(sorted(d.glob("*.yaml")))
             found.extend(sorted(d.glob("*.yml")))
     return found
+
+
+def load_builtin_dictionaries() -> Dictionary:
+    """Load built-in dictionaries shipped with the package.
+
+    Returns:
+        Dictionary with all built-in corrections merged.
+    """
+    paths = find_dictionaries([BUILTIN_DICTIONARY_DIR])
+    return load_dictionaries(paths)

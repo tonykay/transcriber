@@ -10,7 +10,7 @@ from rich.console import Console
 from transcriber.audio import import_dji_audio
 from transcriber.classify import ClassifyRule, classify_text, load_rules, sort_transcript
 from transcriber.config import TranscriberConfig
-from transcriber.dictionary import Dictionary, load_dictionaries
+from transcriber.dictionary import Dictionary, load_builtin_dictionaries, load_dictionaries
 from transcriber.dispatch import append_to_file, write_intent_file
 from transcriber.frontmatter import generate_frontmatter
 from transcriber.intents import IntentConfig, load_builtin_intents, load_intents
@@ -102,18 +102,25 @@ class Pipeline:
     def _load_dictionary(self) -> Dictionary:
         """Load term correction dictionaries.
 
+        Always loads built-in dictionaries. User-configured dictionaries
+        are merged on top.
+
         Returns:
-            Merged Dictionary from configured paths.
+            Merged Dictionary from built-in and configured paths.
         """
-        dict_paths = [Path(p) for p in self.config.dictionaries.paths]
-        if dict_paths:
-            dictionary = load_dictionaries(dict_paths)
-            if dictionary.corrections:
-                self.console.print(
-                    f"  Loaded {len(dictionary.corrections)} term corrections"
-                )
-            return dictionary
-        return Dictionary()
+        builtin = load_builtin_dictionaries()
+        user_paths = [Path(p) for p in self.config.dictionaries.paths]
+        if user_paths:
+            user_dict = load_dictionaries(user_paths)
+            combined = Dictionary(corrections=builtin.corrections + user_dict.corrections)
+        else:
+            combined = builtin
+
+        if combined.corrections:
+            self.console.print(
+                f"  Loaded {len(combined.corrections)} term corrections"
+            )
+        return combined
 
     def _import_audio(self) -> tuple[int, int, int]:
         """Import audio files from DJI device.

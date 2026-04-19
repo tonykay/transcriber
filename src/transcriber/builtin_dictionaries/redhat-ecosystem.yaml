@@ -1,0 +1,48 @@
+corrections:
+  # Red Hat products
+  - wrong: "open shift"
+    right: "OpenShift"
+  - wrong: "auto mission hub"
+    right: "Automation Hub"
+  - wrong: "auto mission controller"
+    right: "automation controller"
+  - wrong: "auto mission mesh"
+    right: "automation mesh"
+  - wrong: "ansible automation platform"
+    right: "Ansible Automation Platform"
+
+  # Ansible terms
+  - wrong: "play book"
+    right: "playbook"
+  - wrong: "play books"
+    right: "playbooks"
+
+  # AI/ML tools
+  - wrong: "open claw"
+    right: "OpenClaw"
+  - wrong: "nano claw"
+    right: "NanoClaw"
+  - wrong: "lang chain"
+    right: "LangChain"
+  - wrong: "lang graph"
+    right: "LangGraph"
+  - wrong: "deep agents"
+    right: "Deep Agents"
+  - wrong: "llama stack"
+    right: "Llama Stack"
+  - wrong: "v llm"
+    right: "vLLM"
+  - wrong: "VLLM"
+    right: "vLLM"
+
+  # Infrastructure
+  - wrong: "cube control"
+    right: "kubectl"
+  - wrong: "cube cuddle"
+    right: "kubectl"
+  - wrong: "cube CTL"
+    right: "kubectl"
+  - wrong: "cube C T L"
+    right: "kubectl"
+  - wrong: "helm chart"
+    right: "Helm chart"

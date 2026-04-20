@@ -43,3 +43,4 @@ Output only the formatted text with no preamble or explanation."""
 
 PARAMETER temperature 0.1
 PARAMETER top_p 0.9
+PARAMETER think off

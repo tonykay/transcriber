@@ -154,6 +154,112 @@ def classify(
 
 
 @app.command()
+def reprocess(
+    file: Annotated[
+        str,
+        typer.Argument(help="Transcript filename (e.g., transcript-2026-04-18-09-22-49.md)"),
+    ],
+    config_file: Annotated[
+        str | None,
+        typer.Option("--config", "-c", help="Path to config file"),
+    ] = None,
+    template: Annotated[
+        str | None,
+        typer.Option("--template", "-t", help="Output template name"),
+    ] = None,
+    dictionary: Annotated[
+        str | None,
+        typer.Option("--dictionary", "-d", help="Additional dictionary YAML file"),
+    ] = None,
+) -> None:
+    """Re-run LLM processing on a previously processed transcript.
+
+    Moves the raw text back to unprocessed, deletes the old output,
+    then re-runs LLM + dictionary + template for that file.
+    """
+    import shutil
+
+    from transcriber.dictionary import load_builtin_dictionaries, load_dictionaries
+    from transcriber.llm import get_llm_provider
+    from transcriber.templates import render_transcript
+
+    config_path = Path(config_file) if config_file else None
+    config = load_config(config_path)
+
+    if template:
+        config.output.template = template
+    if dictionary:
+        config.dictionaries.paths.append(dictionary)
+
+    transcript_path = Path(file)
+    if not transcript_path.is_absolute():
+        transcripts_dir = Path(config.paths.base).expanduser() / "transcripts"
+        transcript_path = transcripts_dir / file
+
+    stem = transcript_path.stem.removeprefix("transcript-")
+    raw_name = f"{stem}.txt"
+
+    text_processed = Path(config.paths.text_processed)
+    text_unprocessed = Path(config.paths.text_unprocessed)
+    raw_source = text_processed / raw_name
+
+    if not raw_source.exists():
+        raw_source = text_unprocessed / raw_name
+        if not raw_source.exists():
+            console.print(f"[red]Raw text not found: {raw_name}[/red]")
+            console.print(f"  Checked: {text_processed}")
+            console.print(f"  Checked: {text_unprocessed}")
+            raise typer.Exit(1)
+    else:
+        shutil.move(str(raw_source), str(text_unprocessed / raw_name))
+        raw_source = text_unprocessed / raw_name
+
+    if transcript_path.exists():
+        transcript_path.unlink()
+
+    provider = get_llm_provider(config.llm.provider, config.llm.model)
+    if not provider.is_available():
+        console.print(f"[red]LLM provider '{config.llm.provider}' is not available[/red]")
+        raise typer.Exit(1)
+
+    console.print(f"[bold blue]Reprocessing {raw_name}...[/bold blue]")
+    console.print(f"  Model: {config.llm.model}")
+
+    result = provider.process(raw_source, transcript_path)
+
+    if not result.success or not result.output_file:
+        console.print(f"[red]LLM processing failed: {result.error}[/red]")
+        raise typer.Exit(1)
+
+    builtin = load_builtin_dictionaries()
+    user_paths = [Path(p) for p in config.dictionaries.paths]
+    if user_paths:
+        from transcriber.dictionary import Dictionary
+
+        user_dict = load_dictionaries(user_paths)
+        combined = Dictionary(corrections=builtin.corrections + user_dict.corrections)
+    else:
+        combined = builtin
+
+    if combined.corrections:
+        content = result.output_file.read_text()
+        corrected = combined.apply(content)
+        result.output_file.write_text(corrected)
+
+    content = result.output_file.read_text()
+    rendered = render_transcript(
+        content,
+        template_name=config.output.template,
+        metadata={"source_file": raw_name},
+    )
+    result.output_file.write_text(rendered)
+
+    shutil.move(str(raw_source), str(text_processed / raw_name))
+
+    console.print(f"[bold green]Done![/bold green] -> {transcript_path}")
+
+
+@app.command()
 def reformat(
     file: Annotated[
         str,

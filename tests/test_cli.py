@@ -90,6 +90,29 @@ def test_cli_models_command_exists():
     assert "llama3.3" in result.output
 
 
+def test_cli_reprocess_command_exists():
+    """CLI should have a reprocess command."""
+    result = runner.invoke(app, ["reprocess", "--help"])
+    assert result.exit_code == 0
+    assert "--template" in result.output
+    assert "--dictionary" in result.output
+
+
+def test_cli_reprocess_missing_raw_file(tmp_path: Path):
+    """Reprocess should fail when raw text file is not found."""
+    with patch("transcriber.cli.load_config") as mock_config:
+        cfg = mock_config.return_value
+        cfg.paths.base = str(tmp_path)
+        cfg.paths.text_processed = str(tmp_path / "text-processed")
+        cfg.paths.text_unprocessed = str(tmp_path / "text-unprocessed")
+        (tmp_path / "text-processed").mkdir()
+        (tmp_path / "text-unprocessed").mkdir()
+        (tmp_path / "transcripts").mkdir()
+
+        result = runner.invoke(app, ["reprocess", "transcript-2026-01-01-00-00-00.md"])
+    assert result.exit_code != 0 or "not found" in result.output.lower()
+
+
 def test_cli_models_create_help():
     """models create should show help with available model names."""
     result = runner.invoke(app, ["models-create", "--help"])

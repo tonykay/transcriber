@@ -68,13 +68,14 @@ class OllamaProvider(LLMProvider):
             # Read input file
             input_text = input_file.read_text()
 
-            # Run ollama
+            # Run ollama with timeout to prevent indefinite hangs
             result = subprocess.run(
                 ["ollama", "run", self.model],
                 input=input_text,
                 capture_output=True,
                 text=True,
                 check=True,
+                timeout=300,
             )
 
             # Write output, stripping ANSI escape sequences
@@ -87,6 +88,13 @@ class OllamaProvider(LLMProvider):
                 success=True,
             )
 
+        except subprocess.TimeoutExpired:
+            return ProcessResult(
+                input_file=input_file,
+                output_file=None,
+                success=False,
+                error="ollama timed out after 5 minutes",
+            )
         except subprocess.CalledProcessError as e:
             return ProcessResult(
                 input_file=input_file,
@@ -117,6 +125,7 @@ class OllamaProvider(LLMProvider):
             capture_output=True,
             text=True,
             check=True,
+            timeout=60,
         )
         result.stdout = ANSI_ESCAPE.sub('', result.stdout)
         return result

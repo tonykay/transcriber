@@ -20,6 +20,16 @@ from transcriber.stt import get_stt_provider
 from transcriber.templates import render_transcript
 
 
+def _date_tags_from_stem(stem: str) -> str:
+    """Generate Obsidian date tags from a filename stem like '2026-04-18-09-22-49'."""
+    parts = stem.split("-")
+    if len(parts) >= 2:
+        year = parts[0]
+        month = f"{parts[0]}-{parts[1]}"
+        return f"#transcript #{year} #{month}"
+    return "#transcript"
+
+
 @dataclass
 class PipelineResult:
     """Result of pipeline execution."""
@@ -252,7 +262,10 @@ class Pipeline:
 
                 # Apply template formatting
                 content = result.output_file.read_text()
-                metadata = {"source_file": text_file.name}
+                metadata = {
+                    "source_file": text_file.name,
+                    "tags": _date_tags_from_stem(text_file.stem),
+                }
                 rendered = render_transcript(
                     content,
                     template_name=self.config.output.template,

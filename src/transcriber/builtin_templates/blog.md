@@ -1,3 +1,5 @@
+{% if metadata.get('tags') %}{{ metadata.tags }}
+{% endif %}
 ---
 title: "{{ metadata.get('title', 'Untitled') }}"
 {% if metadata.get('date') %}

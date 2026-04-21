@@ -1,3 +1,5 @@
+{% if metadata.get('tags') %}{{ metadata.tags }}
+{% endif %}
 # Transcript
 {% if metadata.get('source_file') %}
 **Source**: {{ metadata.source_file }}

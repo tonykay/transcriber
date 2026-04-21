@@ -82,6 +82,25 @@ def test_render_transcript_custom_template(tmp_path: Path):
     assert result == "CUSTOM: test text"
 
 
+def test_render_transcript_with_date_tags():
+    """Should render date tags on line 1 when provided."""
+    result = render_transcript(
+        "Content here.",
+        template_name="default.md",
+        metadata={"source_file": "test.txt", "tags": "#transcript #2026 #2026-04"},
+    )
+    lines = result.strip().splitlines()
+    assert lines[0] == "#transcript #2026 #2026-04"
+
+
+def test_date_tags_from_stem():
+    """Should generate correct date tags from filename stem."""
+    from transcriber.pipeline import _date_tags_from_stem
+
+    assert _date_tags_from_stem("2026-04-18-09-22-49") == "#transcript #2026 #2026-04"
+    assert _date_tags_from_stem("2025-12-24-10-51-36") == "#transcript #2025 #2025-12"
+
+
 def test_list_templates_includes_custom(tmp_path: Path):
     """Custom templates should appear in listing."""
     custom_dir = tmp_path / "templates"

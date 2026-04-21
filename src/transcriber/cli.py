@@ -246,11 +246,13 @@ def reprocess(
         corrected = combined.apply(content)
         result.output_file.write_text(corrected)
 
+    from transcriber.pipeline import _date_tags_from_stem
+
     content = result.output_file.read_text()
     rendered = render_transcript(
         content,
         template_name=config.output.template,
-        metadata={"source_file": raw_name},
+        metadata={"source_file": raw_name, "tags": _date_tags_from_stem(stem)},
     )
     result.output_file.write_text(rendered)
 

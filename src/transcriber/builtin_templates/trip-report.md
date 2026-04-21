@@ -1,3 +1,5 @@
+{% if metadata.get('tags') %}{{ metadata.tags }}
+{% endif %}
 # Trip Report
 {% if metadata.get('event') %}
 **Event**: {{ metadata.event }}

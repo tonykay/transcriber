@@ -2,6 +2,7 @@
 
 import json
 import re
+import subprocess
 from dataclasses import dataclass, field
 
 from transcriber.intents import IntentConfig
@@ -342,7 +343,13 @@ def route_text_with_fallback(
                 result.primary_intent = item["type"]
             result.extracted_intents.append(extracted)
 
-    except (json.JSONDecodeError, KeyError, AttributeError):
+    except (
+        json.JSONDecodeError,
+        KeyError,
+        AttributeError,
+        subprocess.SubprocessError,
+        FileNotFoundError,
+    ):
         pass
 
     return result

@@ -1,6 +1,7 @@
 """Tests for intent router."""
 
 import json
+import subprocess
 from unittest.mock import MagicMock, patch
 
 from transcriber.intents import IntentConfig
@@ -240,6 +241,21 @@ def test_route_text_with_llm_fallback_skipped_when_regex_matches():
     )
     assert result.primary_intent == "todo"
     mock_provider.classify.assert_not_called()
+
+
+def test_route_text_with_llm_fallback_timeout_falls_back_to_regex():
+    """LLM fallback timing out should not crash the pipeline."""
+    mock_provider = MagicMock()
+    mock_provider.is_available.return_value = True
+    mock_provider.classify.side_effect = subprocess.TimeoutExpired(cmd="ollama", timeout=60)
+
+    result = route_text_with_fallback(
+        text="Some rambling text with no explicit triggers.",
+        intents=[_todo_intent()],
+        llm_provider=mock_provider,
+    )
+    assert result.primary_intent is None
+    assert result.extracted_intents == []
 
 
 def test_route_text_with_fallback_unavailable_llm():

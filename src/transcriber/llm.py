@@ -75,7 +75,7 @@ class OllamaProvider(LLMProvider):
                 capture_output=True,
                 text=True,
                 check=True,
-                timeout=300,
+                timeout=900,
             )
 
             # Write output, stripping ANSI escape sequences
@@ -93,7 +93,7 @@ class OllamaProvider(LLMProvider):
                 input_file=input_file,
                 output_file=None,
                 success=False,
-                error="ollama timed out after 5 minutes",
+                error="ollama timed out after 15 minutes",
             )
         except subprocess.CalledProcessError as e:
             return ProcessResult(

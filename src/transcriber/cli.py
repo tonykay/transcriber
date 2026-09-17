@@ -24,12 +24,56 @@ def version_callback(value: bool) -> None:
         raise typer.Exit()
 
 
+def list_output_dirs_callback(value: bool) -> None:
+    """Print built-in output destinations without loading user config."""
+    if not value:
+        return
+
+    from transcriber.config import PathsConfig
+    from transcriber.intents import load_builtin_intents
+
+    paths = PathsConfig()
+    base = Path(paths.base).expanduser()
+    console.print("[bold]Built-in default output directories[/bold]")
+    console.print(f"  Base: {base}", markup=False, soft_wrap=True)
+    console.print(f"  Transcripts: {paths.transcripts}", markup=False, soft_wrap=True)
+    console.print(
+        f"  Projects (with classification): {base / 'projects'}", markup=False, soft_wrap=True
+    )
+
+    intents = load_builtin_intents()
+    for target in dict.fromkeys(i.target for i in intents if i.output == "file"):
+        console.print(f"  {base / target}", markup=False, soft_wrap=True)
+
+    console.print("\n[bold]Append output files[/bold]")
+    for target in dict.fromkeys(i.target for i in intents if i.output == "append"):
+        console.print(f"  {base / target}", markup=False, soft_wrap=True)
+
+    console.print("\n[bold]Processing directories[/bold]")
+    for directory in (
+        paths.audio_unprocessed, paths.audio_processed,
+        paths.text_unprocessed, paths.text_processed,
+    ):
+        console.print(f"  {directory}", markup=False, soft_wrap=True)
+    console.print("\nDefaults only; configured paths may differ. No directories created.")
+    raise typer.Exit()
+
+
 @app.callback()
 def main(
     version: Annotated[
         bool | None,
         typer.Option("--version", "-v", callback=version_callback, is_eager=True),
     ] = None,
+    list_output_dirs: Annotated[
+        bool,
+        typer.Option(
+            "--list-output-dirs",
+            help="List built-in default output destinations and exit (ignores config)",
+            callback=list_output_dirs_callback,
+            is_eager=True,
+        ),
+    ] = False,
 ) -> None:
     """Transcriber - Voice capture and processing system."""
     pass
@@ -40,6 +84,14 @@ def process(
     config_file: Annotated[
         str | None,
         typer.Option("--config", "-c", help="Path to config file"),
+    ] = None,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir", "-o",
+            help="Override base directory for outputs and processing intermediates",
+            file_okay=False,
+        ),
     ] = None,
     skip_import: Annotated[
         bool,
@@ -72,6 +124,8 @@ def process(
     config = load_config(config_path)
 
     # Override config with CLI flags
+    if output_dir is not None:
+        config.paths.base = str(output_dir.expanduser())
     if template:
         config.output.template = template
     if dictionary:

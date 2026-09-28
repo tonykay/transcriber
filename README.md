@@ -1,14 +1,15 @@
 # Transcriber
 
-A Python voice capture and processing system that turns DJI audio recordings into structured, classified markdown documents with smart intent routing.
+A Python tool that turns DJI audio recordings into structured markdown documents with intent routing and project classification.
 
-## What It Does
+## What it does
 
 1. **Imports** audio files from your DJI MIC 2 (or any audio source)
-2. **Transcribes** speech to text using Parakeet MLX (Apple Silicon optimized)
-3. **Formats** raw transcripts into clean paragraphs via Ollama LLM
-4. **Routes** recordings by intent -- detects voice triggers like "Todo", "Article idea", "Speak to John about"
-5. **Outputs** Obsidian-compatible markdown with YAML frontmatter and tags
+2. **Transcribes** speech to text using Parakeet MLX
+3. **Formats** raw transcripts into clean paragraphs via a local Ollama LLM
+4. **Corrects** technical terms using built-in and custom dictionaries
+5. **Routes** recordings by intent — detects voice triggers like "Todo", "Article idea", "Speak to John about"
+6. **Outputs** Obsidian-compatible markdown with YAML frontmatter and tags
 
 ## Installation
 
@@ -18,6 +19,7 @@ A Python voice capture and processing system that turns DJI audio recordings int
 - [uv](https://docs.astral.sh/uv/) (Python package manager)
 - [Parakeet MLX](https://github.com/senstella/parakeet-mlx) for speech-to-text
 - [Ollama](https://ollama.com) for LLM processing
+- Mac with Apple Silicon (Parakeet MLX requires it)
 
 ### Setup
 
@@ -29,18 +31,28 @@ cd transcriber
 # Install in development mode
 uv pip install -e ".[dev]"
 
-# Create the Ollama transcriber model (one-time)
-ollama create transcriber -f Modelfile
+# List available LLM models
+transcriber models
+
+# Create one (e.g., qwen3.5)
+transcriber models-create qwen3.5
 ```
 
-After installation, `transcriber` is available as a command on your PATH.
+Set your model in `~/.config/transcriber/config.toml`:
+
+```toml
+[llm]
+model = "transcriber-qwen3.5:latest"
+```
+
+After installation, `transcriber` is on your PATH.
 
 ### Hardware
 
 - **DJI MIC 2** or compatible audio device
-- **Mac with Apple Silicon** (recommended for Parakeet MLX)
+- **Mac with Apple Silicon** for Parakeet MLX
 
-## Quick Start
+## Quick start
 
 ```bash
 # Plug in your DJI MIC 2, then run:
@@ -49,7 +61,7 @@ transcriber process
 
 This runs the full pipeline: import, transcribe, format, route, and classify.
 
-## CLI Reference
+## CLI reference
 
 ```bash
 # Full pipeline
@@ -70,6 +82,9 @@ transcriber process --sort
 # Disable LLM fallback (regex-only intent routing)
 transcriber process --no-llm-fallback
 
+# Re-run LLM processing on a single transcript
+transcriber reprocess transcript-2026-04-18-09-22-49.md
+
 # Classify a single transcript
 transcriber classify transcript.md --rules rules.yaml
 
@@ -82,13 +97,19 @@ transcriber config
 # List available templates
 transcriber templates
 
+# List available Ollama Modelfiles and creation status
+transcriber models
+
+# Create an Ollama model from a built-in Modelfile
+transcriber models-create gemma4
+
 # Show version
 transcriber --version
 ```
 
-## Intent Routing
+## Intent routing
 
-Transcriber detects voice triggers in your recordings and routes them automatically:
+Transcriber detects voice triggers in your recordings and routes them:
 
 | You say... | What happens |
 |------------|-------------|
@@ -98,11 +119,11 @@ Transcriber detects voice triggers in your recordings and routes them automatica
 | "Blog post, why agentic DevOps matters" | Individual file in `blogs/` |
 | "Note, remember to check the logs" | Appended to `notes.md` |
 
-Triggers work at the start of a recording (sets the whole file's intent) or **mid-sentence** during a longer brain dump -- embedded todos get extracted automatically.
+Triggers work at the start of a recording (sets the whole file's intent) or mid-sentence during a longer brain dump — embedded todos get extracted automatically.
 
-When no explicit trigger is detected, an optional LLM fallback classifies the recording semantically.
+When no trigger is detected, an optional LLM fallback classifies the recording.
 
-### Custom Triggers
+### Custom triggers
 
 Define your own triggers in `~/.config/transcriber/intents.yaml`:
 
@@ -116,9 +137,9 @@ intents:
     target: "todos.md"
 ```
 
-## Output Format
+## Output format
 
-All outputs include YAML frontmatter for Obsidian compatibility:
+All outputs include YAML frontmatter for Obsidian:
 
 ```yaml
 ---
@@ -132,11 +153,11 @@ project: summit-lab
 Your transcript content here...
 ```
 
-## Directory Structure
+## Directory structure
 
 ```
 ~/Resources/Transcripts/
-├── .processing/              # Hidden intermediate files
+├── .processing/              # Intermediate files
 │   ├── audio-unprocessed/
 │   ├── audio-processed/
 │   ├── text-unprocessed/
@@ -168,7 +189,7 @@ provider = "parakeet"    # or "whisper"
 
 [llm]
 provider = "ollama"
-model = "transcriber:latest"
+model = "transcriber-qwen3.5:latest"
 
 [output]
 template = "default.md"
@@ -191,7 +212,7 @@ Add custom templates to `~/.config/transcriber/templates/`.
 ## Development
 
 ```bash
-# Run tests (118 tests)
+# Run tests
 uv run pytest
 
 # Run tests with coverage
@@ -225,13 +246,11 @@ src/transcriber/
 ├── dispatch.py         # Output routing (append/file)
 ├── classify.py         # Project classification
 ├── builtin_intents.yaml
-└── builtin_templates/
-    ├── default.md
-    ├── blog.md
-    ├── trip-report.md
-    └── summary.md
+├── builtin_templates/
+├── builtin_dictionaries/   # Term correction dictionaries
+└── builtin_modelfiles/     # Ollama Modelfiles
 ```
 
 ## Legacy
 
-The original Bash implementation is preserved in `legacy/transcriber-bash.sh`.
+The original Bash implementation is in `legacy/transcriber-bash.sh`.

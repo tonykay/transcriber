@@ -1,0 +1,528 @@
+{
+  "entities": [
+    {
+      "id": "spec-001-output-directory-flag",
+      "name": "Output Directory Flag Feature",
+      "type": "feature",
+      "description": "CLI feature to override default output directory via --output-dir flag",
+      "properties": {
+        "status": "COMPLETED",
+        "workflow_type": "Simple Feature Addition",
+        "qa_verdict": "APPROVED"
+      }
+    },
+    {
+      "id": "file-transcriber-sh",
+      "name": "transcriber.sh",
+      "type": "file",
+      "description": "Main Bash script for DJI audio processing pipeline",
+      "properties": {
+        "language": "bash",
+        "executable": true
+      }
+    },
+    {
+      "id": "cli-option-output-dir",
+      "name": "--output-dir / -o",
+      "type": "cli_option",
+      "description": "CLI flag to specify custom output directory path",
+      "properties": {
+        "flags": ["--output-dir", "-o"],
+        "type": "argument",
+        "default": "~/Resources/Transcripts"
+      }
+    },
+    {
+      "id": "cli-option-help",
+      "name": "--help / -h",
+      "type": "cli_option",
+      "description": "CLI flag to display usage information",
+      "properties": {
+        "flags": ["--help", "-h"]
+      }
+    },
+    {
+      "id": "var-output-dir-base",
+      "name": "OUTPUT_DIR_BASE",
+      "type": "variable",
+      "description": "Bash variable holding configurable output directory base path",
+      "properties": {
+        "scope": "global",
+        "default": "~/Resources/Transcripts",
+        "override": "environment variable or CLI flag"
+      }
+    },
+    {
+      "id": "commit-6e8f2cb",
+      "name": "Commit 6e8f2cb",
+      "type": "commit",
+      "description": "Implementation commit for --output-dir option",
+      "properties": {
+        "message": "auto-claude: subtask-1-1 - Add --output-dir option to transcriber.sh"
+      }
+    },
+    {
+      "id": "gotcha-bash-not-python",
+      "name": "Bash vs Python Implementation Mismatch",
+      "type": "gotcha",
+      "description": "Spec referenced Python/Typer CLI but project is actually Bash script",
+      "properties": {
+        "date": "2026-02-03",
+        "context": "subtask-1-1",
+        "impact": "Spec needed adaptation from Python to Bash implementation"
+      }
+    },
+    {
+      "id": "tool-parakeet-mlx",
+      "name": "Parakeet MLX",
+      "type": "dependency",
+      "description": "Audio-to-text transcription engine optimized for Apple Silicon",
+      "properties": {
+        "category": "speech-to-text",
+        "install": "pip install parakeet-mlx"
+      }
+    },
+    {
+      "id": "tool-ollama",
+      "name": "Ollama",
+      "type": "dependency",
+      "description": "AI language model runtime for transcript enhancement",
+      "properties": {
+        "category": "LLM",
+        "url": "https://ollama.com"
+      }
+    },
+    {
+      "id": "model-transcriber",
+      "name": "transcriber:latest",
+      "type": "ollama_model",
+      "description": "Custom Ollama model for formatting speech-to-text transcriptions into markdown",
+      "properties": {
+        "base_model": "Qwen2.5:72b-instruct",
+        "purpose": "Handling technical terminology and organizing transcribed content"
+      }
+    },
+    {
+      "id": "model-transcriber-reformat",
+      "name": "transcriber-reformat",
+      "type": "ollama_model",
+      "description": "Optional Ollama model for reformatting raw text into structured paragraphs",
+      "properties": {
+        "base_model": "llama3.3:70b",
+        "temperature": 0.1,
+        "size": "42 GB",
+        "modelfile": "Modelfiles/Modelfile-reformat",
+        "preservation": "100% content preservation"
+      }
+    },
+    {
+      "id": "script-reformat-transcript",
+      "name": "reformat-transcript.sh",
+      "type": "helper_script",
+      "description": "Helper script for batch processing with transcriber-reformat model",
+      "properties": {
+        "location": "scripts/reformat-transcript.sh"
+      }
+    },
+    {
+      "id": "dir-audio-unprocessed",
+      "name": "audio-unprocessed/",
+      "type": "directory",
+      "description": "Raw audio files from DJI device",
+      "properties": {
+        "base_path": "~/Resources/Transcripts/audio-unprocessed/",
+        "configurable_via": "OUTPUT_DIR_BASE"
+      }
+    },
+    {
+      "id": "dir-audio-processed",
+      "name": "audio-processed/",
+      "type": "directory",
+      "description": "Audio files that have been transcribed",
+      "properties": {
+        "base_path": "~/Resources/Transcripts/audio-processed/",
+        "configurable_via": "OUTPUT_DIR_BASE"
+      }
+    },
+    {
+      "id": "dir-text-unprocessed",
+      "name": "text-unprocessed/",
+      "type": "directory",
+      "description": "Raw transcription text files from Parakeet MLX",
+      "properties": {
+        "base_path": "~/Resources/Transcripts/text-unprocessed/",
+        "configurable_via": "OUTPUT_DIR_BASE"
+      }
+    },
+    {
+      "id": "dir-text-processed",
+      "name": "text-processed/",
+      "type": "directory",
+      "description": "Text files processed by Ollama AI",
+      "properties": {
+        "base_path": "~/Resources/Transcripts/text-processed/",
+        "configurable_via": "OUTPUT_DIR_BASE"
+      }
+    },
+    {
+      "id": "dir-transcripts",
+      "name": "transcripts/",
+      "type": "directory",
+      "description": "Final enhanced markdown transcripts",
+      "properties": {
+        "base_path": "~/Resources/Transcripts/transcripts/",
+        "configurable_via": "OUTPUT_DIR_BASE"
+      }
+    },
+    {
+      "id": "function-process-dji-audio",
+      "name": "process_dji_audio()",
+      "type": "function",
+      "description": "Import and rename DJI audio files with timestamp parsing",
+      "properties": {
+        "language": "bash",
+        "input_format": "DJI_XX_YYYYMMDD_HHMMSS.WAV",
+        "output_format": "YYYY-MM-DD-HH:MM:SS.WAV",
+        "source": "/Volumes/DJI_MIC2/DJI_Audio_*/"
+      }
+    },
+    {
+      "id": "function-transcribe-audio-files",
+      "name": "transcribe_audio_files()",
+      "type": "function",
+      "description": "Convert audio files to text using Parakeet MLX",
+      "properties": {
+        "language": "bash",
+        "command": "parakeet-mlx $filename --output-format txt --output-dir text-unprocessed"
+      }
+    },
+    {
+      "id": "function-process-transcripts",
+      "name": "process_transcripts()",
+      "type": "function",
+      "description": "Enhance transcriptions using Ollama AI language models",
+      "properties": {
+        "language": "bash",
+        "command": "cat $filename | ollama run transcriber:latest | tee $output_file",
+        "output_prefix": "transcript-"
+      }
+    },
+    {
+      "id": "function-usage",
+      "name": "usage()",
+      "type": "function",
+      "description": "Display comprehensive usage instructions",
+      "properties": {
+        "language": "bash"
+      }
+    },
+    {
+      "id": "device-dji-mic2",
+      "name": "DJI Mic 2",
+      "type": "hardware",
+      "description": "DJI audio recording device",
+      "properties": {
+        "mount_point": "/Volumes/DJI_MIC2/",
+        "directory_pattern": "DJI_Audio_*"
+      }
+    },
+    {
+      "id": "naming-convention-dji",
+      "name": "DJI Filename Convention",
+      "type": "convention",
+      "description": "DJI device filename format for audio recordings",
+      "properties": {
+        "pattern": "DJI_XX_YYYYMMDD_HHMMSS.WAV",
+        "regex": "^DJI_[0-9]+_([0-9]{8})_([0-9]{6})\\.WAV$"
+      }
+    },
+    {
+      "id": "naming-convention-normalized",
+      "name": "Normalized Timestamp Convention",
+      "type": "convention",
+      "description": "Standardized ISO-like timestamp format for renamed files",
+      "properties": {
+        "pattern": "YYYY-MM-DD-HH:MM:SS.WAV",
+        "example": "2025-07-02-17:54:46.WAV"
+      }
+    },
+    {
+      "id": "naming-convention-transcript",
+      "name": "Transcript Filename Convention",
+      "type": "convention",
+      "description": "Final markdown transcript filename format",
+      "properties": {
+        "pattern": "transcript-YYYY-MM-DD-HH:MM:SS.md",
+        "example": "transcript-2025-07-02-17:54:46.md"
+      }
+    },
+    {
+      "id": "spec-001-worktree",
+      "name": "Spec 001 Worktree",
+      "type": "worktree",
+      "description": "Git worktree for implementing output directory flag feature",
+      "properties": {
+        "path": ".auto-claude/worktrees/tasks/001-allow-the-output-directory-structure-to-be-specifi/"
+      }
+    },
+    {
+      "id": "qa-report-001",
+      "name": "QA Validation Report 001",
+      "type": "document",
+      "description": "Quality assurance validation for output directory flag feature",
+      "properties": {
+        "date": "2026-02-03T14:55:00Z",
+        "verdict": "SIGN-OFF: APPROVED",
+        "subtasks_complete": "1/1"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "source": "spec-001-output-directory-flag",
+      "target": "file-transcriber-sh",
+      "type": "MODIFIES",
+      "description": "Feature adds CLI options to the main script"
+    },
+    {
+      "source": "spec-001-output-directory-flag",
+      "target": "cli-option-output-dir",
+      "type": "INTRODUCES",
+      "description": "Feature introduces new CLI option"
+    },
+    {
+      "source": "spec-001-output-directory-flag",
+      "target": "cli-option-help",
+      "type": "INTRODUCES",
+      "description": "Feature introduces help flag"
+    },
+    {
+      "source": "spec-001-output-directory-flag",
+      "target": "var-output-dir-base",
+      "type": "INTRODUCES",
+      "description": "Feature introduces configurable base directory variable"
+    },
+    {
+      "source": "spec-001-output-directory-flag",
+      "target": "commit-6e8f2cb",
+      "type": "IMPLEMENTED_IN",
+      "description": "Feature implemented in this commit"
+    },
+    {
+      "source": "spec-001-output-directory-flag",
+      "target": "gotcha-bash-not-python",
+      "type": "ENCOUNTERED",
+      "description": "Feature encountered implementation mismatch"
+    },
+    {
+      "source": "spec-001-output-directory-flag",
+      "target": "qa-report-001",
+      "type": "VALIDATED_BY",
+      "description": "Feature validated and approved by QA report"
+    },
+    {
+      "source": "spec-001-output-directory-flag",
+      "target": "spec-001-worktree",
+      "type": "DEVELOPED_IN",
+      "description": "Feature developed in dedicated worktree"
+    },
+    {
+      "source": "cli-option-output-dir",
+      "target": "var-output-dir-base",
+      "type": "SETS",
+      "description": "CLI option sets the base directory variable"
+    },
+    {
+      "source": "var-output-dir-base",
+      "target": "dir-audio-unprocessed",
+      "type": "CONFIGURES",
+      "description": "Variable configures base path for directory"
+    },
+    {
+      "source": "var-output-dir-base",
+      "target": "dir-audio-processed",
+      "type": "CONFIGURES",
+      "description": "Variable configures base path for directory"
+    },
+    {
+      "source": "var-output-dir-base",
+      "target": "dir-text-unprocessed",
+      "type": "CONFIGURES",
+      "description": "Variable configures base path for directory"
+    },
+    {
+      "source": "var-output-dir-base",
+      "target": "dir-text-processed",
+      "type": "CONFIGURES",
+      "description": "Variable configures base path for directory"
+    },
+    {
+      "source": "var-output-dir-base",
+      "target": "dir-transcripts",
+      "type": "CONFIGURES",
+      "description": "Variable configures base path for directory"
+    },
+    {
+      "source": "file-transcriber-sh",
+      "target": "function-process-dji-audio",
+      "type": "CONTAINS",
+      "description": "Script contains function"
+    },
+    {
+      "source": "file-transcriber-sh",
+      "target": "function-transcribe-audio-files",
+      "type": "CONTAINS",
+      "description": "Script contains function"
+    },
+    {
+      "source": "file-transcriber-sh",
+      "target": "function-process-transcripts",
+      "type": "CONTAINS",
+      "description": "Script contains function"
+    },
+    {
+      "source": "file-transcriber-sh",
+      "target": "function-usage",
+      "type": "CONTAINS",
+      "description": "Script contains function"
+    },
+    {
+      "source": "file-transcriber-sh",
+      "target": "tool-parakeet-mlx",
+      "type": "DEPENDS_ON",
+      "description": "Script requires tool for transcription"
+    },
+    {
+      "source": "file-transcriber-sh",
+      "target": "tool-ollama",
+      "type": "DEPENDS_ON",
+      "description": "Script requires tool for AI processing"
+    },
+    {
+      "source": "function-process-dji-audio",
+      "target": "device-dji-mic2",
+      "type": "READS_FROM",
+      "description": "Function imports audio from device"
+    },
+    {
+      "source": "function-process-dji-audio",
+      "target": "naming-convention-dji",
+      "type": "PARSES",
+      "description": "Function parses DJI filename format"
+    },
+    {
+      "source": "function-process-dji-audio",
+      "target": "naming-convention-normalized",
+      "type": "PRODUCES",
+      "description": "Function renames files to normalized format"
+    },
+    {
+      "source": "function-process-dji-audio",
+      "target": "dir-audio-unprocessed",
+      "type": "WRITES_TO",
+      "description": "Function writes renamed files to directory"
+    },
+    {
+      "source": "function-process-dji-audio",
+      "target": "var-output-dir-base",
+      "type": "USES",
+      "description": "Function uses configurable base directory"
+    },
+    {
+      "source": "function-transcribe-audio-files",
+      "target": "dir-audio-unprocessed",
+      "type": "READS_FROM",
+      "description": "Function processes files from directory"
+    },
+    {
+      "source": "function-transcribe-audio-files",
+      "target": "tool-parakeet-mlx",
+      "type": "INVOKES",
+      "description": "Function invokes transcription tool"
+    },
+    {
+      "source": "function-transcribe-audio-files",
+      "target": "dir-text-unprocessed",
+      "type": "WRITES_TO",
+      "description": "Function writes transcription text to directory"
+    },
+    {
+      "source": "function-transcribe-audio-files",
+      "target": "dir-audio-processed",
+      "type": "MOVES_TO",
+      "description": "Function moves processed audio files to directory"
+    },
+    {
+      "source": "function-transcribe-audio-files",
+      "target": "var-output-dir-base",
+      "type": "USES",
+      "description": "Function uses configurable base directory"
+    },
+    {
+      "source": "function-process-transcripts",
+      "target": "dir-text-unprocessed",
+      "type": "READS_FROM",
+      "description": "Function processes files from directory"
+    },
+    {
+      "source": "function-process-transcripts",
+      "target": "tool-ollama",
+      "type": "INVOKES",
+      "description": "Function invokes AI enhancement tool"
+    },
+    {
+      "source": "function-process-transcripts",
+      "target": "model-transcriber",
+      "type": "USES",
+      "description": "Function uses Ollama model for enhancement"
+    },
+    {
+      "source": "function-process-transcripts",
+      "target": "dir-transcripts",
+      "type": "WRITES_TO",
+      "description": "Function writes enhanced markdown to directory"
+    },
+    {
+      "source": "function-process-transcripts",
+      "target": "dir-text-processed",
+      "type": "MOVES_TO",
+      "description": "Function moves processed text files to directory"
+    },
+    {
+      "source": "function-process-transcripts",
+      "target": "naming-convention-transcript",
+      "type": "PRODUCES",
+      "description": "Function creates files following transcript naming convention"
+    },
+    {
+      "source": "function-process-transcripts",
+      "target": "var-output-dir-base",
+      "type": "USES",
+      "description": "Function uses configurable base directory"
+    },
+    {
+      "source": "tool-ollama",
+      "target": "model-transcriber",
+      "type": "RUNS",
+      "description": "Ollama runs the transcriber model"
+    },
+    {
+      "source": "tool-ollama",
+      "target": "model-transcriber-reformat",
+      "type": "RUNS",
+      "description": "Ollama runs the optional reformat model"
+    },
+    {
+      "source": "script-reformat-transcript",
+      "target": "model-transcriber-reformat",
+      "type": "USES",
+      "description": "Helper script uses reformat model for batch processing"
+    },
+    {
+      "source": "qa-report-001",
+      "target": "commit-6e8f2cb",
+      "type": "VALIDATES",
+      "description": "QA report validates the implementation commit"
+    }
+  ]
+}

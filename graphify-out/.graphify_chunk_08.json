@@ -1,0 +1,320 @@
+{
+  "chunk_id": 8,
+  "total_chunks": 9,
+  "files_processed": 22,
+  "entities": [
+    {
+      "type": "workflow_command",
+      "name": "/speckit.plan",
+      "description": "Execute the implementation planning workflow using the plan template to generate design artifacts",
+      "properties": {
+        "phases": ["Phase 0: Outline & Research", "Phase 1: Design & Contracts"],
+        "outputs": ["research.md", "data-model.md", "contracts/", "quickstart.md"],
+        "constitution_check": true
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/doc-refactor",
+      "description": "Restructure project documentation for clarity and accessibility",
+      "properties": {
+        "steps": ["Analyze project", "Centralize docs", "Root README.md", "Component docs", "Organize docs/", "Create guides", "Use Mermaid"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/constitution",
+      "description": "Create or update the project constitution from interactive or provided principle inputs",
+      "properties": {
+        "versioning": "semantic versioning (MAJOR.MINOR.PATCH)",
+        "sync_artifacts": [".specify/templates/plan-template.md", ".specify/templates/spec-template.md", ".specify/templates/tasks-template.md"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/push-all",
+      "description": "Stage all changes, create commit, and push to remote (use with caution)",
+      "properties": {
+        "safety_checks": ["secrets", "api_keys", "large_files", "build_artifacts", "temp_files"],
+        "conventional_commits": true
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/speckit.checklist",
+      "description": "Generate custom checklist for the current feature - unit tests for requirements writing",
+      "properties": {
+        "purpose": "validate quality, clarity, and completeness of requirements",
+        "max_questions": 5,
+        "test_requirements_not_implementation": true,
+        "quality_dimensions": ["Completeness", "Clarity", "Consistency", "Measurability", "Coverage"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/unit-test-expand",
+      "description": "Increase test coverage by targeting untested branches and edge cases",
+      "properties": {
+        "frameworks": ["Jest/Vitest/Mocha", "pytest/unittest", "Go testing/testify", "Rust test framework"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/setup-ci-cd",
+      "description": "Implement pre-commit hooks and GitHub Actions for quality assurance",
+      "properties": {
+        "pre_commit_tools": ["Prettier/Black/gofmt/rustfmt", "ESLint/Ruff/golangci-lint/Clippy", "Bandit/gosec/cargo-audit/npm audit"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/pr",
+      "description": "Clean up code, stage changes, and prepare a pull request",
+      "properties": {
+        "steps": ["Run linting", "Run tests", "Review git diff", "Stage changes", "Create commit message", "Generate PR summary"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/speckit.analyze",
+      "description": "Perform non-destructive cross-artifact consistency and quality analysis",
+      "properties": {
+        "read_only": true,
+        "artifacts": ["spec.md", "plan.md", "tasks.md"],
+        "detection_passes": ["Duplication", "Ambiguity", "Underspecification", "Constitution Alignment", "Coverage Gaps", "Inconsistency"],
+        "severity_levels": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/speckit.clarify",
+      "description": "Identify underspecified areas in feature spec with up to 5 targeted clarification questions",
+      "properties": {
+        "max_questions": 5,
+        "max_clarifications": 3,
+        "interactive": true,
+        "updates_spec_incrementally": true
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/optimize",
+      "description": "Analyze code for performance issues and suggest optimizations",
+      "properties": {
+        "priorities": ["Performance bottlenecks", "Memory leaks", "Algorithm improvements", "Caching opportunities", "Concurrency issues"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/speckit.implement",
+      "description": "Execute the implementation plan by processing and executing all tasks defined in tasks.md",
+      "properties": {
+        "checklist_validation": true,
+        "project_setup": ["ignore files detection and creation"],
+        "execution_phases": ["Setup", "Tests", "Core", "Integration", "Polish"],
+        "progress_tracking": true
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/generate-api-docs",
+      "description": "Create comprehensive API documentation from source code",
+      "properties": {
+        "output_format": "markdown",
+        "includes": ["function signatures", "JSDoc comments", "request/response schemas", "error documentation"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/commit",
+      "description": "Create a git commit with context",
+      "properties": {
+        "conventional_commits": true,
+        "dynamic_context": ["git status", "git diff", "git branch", "git log"]
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/speckit.specify",
+      "description": "Create or update the feature specification from natural language feature description",
+      "properties": {
+        "max_clarifications": 3,
+        "generates_short_name": true,
+        "quality_validation": true,
+        "creates_checklist": "checklists/requirements.md"
+      }
+    },
+    {
+      "type": "workflow_command",
+      "name": "/speckit.tasks",
+      "description": "Generate actionable, dependency-ordered tasks.md for the feature",
+      "properties": {
+        "organization": "by user story",
+        "task_format": "checkbox with ID, [P] marker, [Story] label, description with file path",
+        "phases": ["Setup", "Foundational", "User Stories (P1, P2, P3...)", "Polish"],
+        "tests_optional": true
+      }
+    },
+    {
+      "type": "documentation",
+      "name": "bash-spec.md",
+      "description": "DJI Transcriber Script Specification for bash implementation",
+      "properties": {
+        "functions": ["process_dji_audio()", "transcribe_audio_files()", "process_transcripts()", "usage()"],
+        "dependencies": ["Bash 4.0+", "parakeet-mlx", "ollama", "transcriber:latest"],
+        "directory_structure": ["audio-unprocessed", "audio-processed", "text-unprocessed", "text-processed", "transcripts"]
+      }
+    },
+    {
+      "type": "implementation_plan",
+      "name": "2026-02-01-python-rewrite",
+      "description": "Python Rewrite Implementation Plan",
+      "properties": {
+        "goal": "Rewrite transcriber bash script in Python with library + CLI architecture",
+        "tech_stack": ["Python 3.13", "uv", "Typer", "tomllib", "Pydantic", "pytest"],
+        "architecture": "Core library in src/transcriber/ with independent modules",
+        "total_estimated_time": "~2 hours",
+        "tasks": 9,
+        "phases": ["Project Scaffolding", "Core Pipeline", "Integration Testing"]
+      }
+    },
+    {
+      "type": "implementation_plan",
+      "name": "2026-03-30-voice-intent-routing",
+      "description": "Voice Intent Routing & Smart Capture Implementation Plan",
+      "properties": {
+        "goal": "Add two-pass hybrid router for voice triggers, intent extraction, frontmatter generation, and output dispatch",
+        "architecture": "router.py (Pass 1: regex, Pass 2: LLM fallback), frontmatter.py, dispatch.py",
+        "tech_stack": ["Python 3.13", "Pydantic V2", "PyYAML", "regex", "Ollama"],
+        "tasks": 15,
+        "new_modules": ["intents.py", "router.py", "frontmatter.py", "dispatch.py"],
+        "modified_modules": ["config.py", "classify.py", "pipeline.py", "cli.py", "llm.py"]
+      }
+    },
+    {
+      "type": "template",
+      "name": "plan-template.md",
+      "description": "Implementation Plan template for features",
+      "properties": {
+        "sections": ["Summary", "Technical Context", "Constitution Check", "Project Structure", "Complexity Tracking"],
+        "filled_by": "/speckit.plan command"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "from": "/speckit.plan",
+      "to": "plan-template.md",
+      "type": "uses_template"
+    },
+    {
+      "from": "/speckit.analyze",
+      "to": ".specify/memory/constitution.md",
+      "type": "validates_against"
+    },
+    {
+      "from": "/speckit.clarify",
+      "to": "/speckit.plan",
+      "type": "precedes"
+    },
+    {
+      "from": "/speckit.specify",
+      "to": "/speckit.clarify",
+      "type": "precedes"
+    },
+    {
+      "from": "/speckit.tasks",
+      "to": "/speckit.plan",
+      "type": "depends_on"
+    },
+    {
+      "from": "/speckit.implement",
+      "to": "/speckit.tasks",
+      "type": "executes"
+    },
+    {
+      "from": "2026-02-01-python-rewrite",
+      "to": "bash-spec.md",
+      "type": "implements"
+    },
+    {
+      "from": "2026-03-30-voice-intent-routing",
+      "to": "2026-02-01-python-rewrite",
+      "type": "extends"
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Speckit Workflow",
+      "description": "Development workflow using /speckit commands for specification-driven development",
+      "workflow": [
+        "/speckit.specify (create spec from natural language)",
+        "/speckit.clarify (resolve ambiguities)",
+        "/speckit.plan (generate implementation plan)",
+        "/speckit.tasks (generate task breakdown)",
+        "/speckit.checklist (validate requirements quality)",
+        "/speckit.analyze (cross-artifact consistency)",
+        "/speckit.implement (execute tasks)"
+      ]
+    },
+    {
+      "name": "Constitution-Driven Development",
+      "description": "Project principles defined in constitution.md govern all development decisions",
+      "properties": {
+        "versioning": "semantic (MAJOR.MINOR.PATCH)",
+        "authority": "non-negotiable within analysis scope",
+        "propagation": "updates sync across dependent templates"
+      }
+    },
+    {
+      "name": "Checklist as Requirements Tests",
+      "description": "Checklists validate requirement quality, not implementation correctness",
+      "principles": [
+        "Test the WHAT (requirements), not the HOW (implementation)",
+        "Focus on: Completeness, Clarity, Consistency, Measurability, Coverage",
+        "Wrong: 'Verify button clicks correctly'",
+        "Right: 'Are visual hierarchy requirements defined with measurable criteria?'"
+      ]
+    },
+    {
+      "name": "Two-Pass Intent Routing",
+      "description": "Hybrid approach for detecting voice triggers in transcripts",
+      "passes": [
+        "Pass 1: Regex matching for explicit triggers (fast, deterministic)",
+        "Pass 2: LLM fallback for ambiguous content (slow, flexible)"
+      ]
+    },
+    {
+      "name": "Task Organization by User Story",
+      "description": "Tasks organized by user story for independent implementation and testing",
+      "format": "- [ ] [TaskID] [P?] [Story?] Description with file path",
+      "phases": ["Setup", "Foundational", "User Story P1", "User Story P2", "Polish"]
+    },
+    {
+      "name": "Obsidian-Compatible Output",
+      "description": "All transcript outputs use YAML frontmatter with #tags",
+      "properties": {
+        "frontmatter_fields": ["date", "source", "tags", "intent", "project", "assigned"],
+        "tag_format": "#underscored_lowercase",
+        "dispatch_modes": ["append (todos.md, notes.md)", "file (article-ideas/, blogs/)"]
+      }
+    }
+  ],
+  "tags": [
+    "workflow_automation",
+    "specification_driven_development",
+    "requirements_validation",
+    "git_workflow",
+    "ci_cd",
+    "documentation",
+    "testing",
+    "voice_capture",
+    "intent_routing",
+    "llm_integration",
+    "python_rewrite",
+    "obsidian",
+    "frontmatter",
+    "constitution",
+    "project_management"
+  ]
+}

@@ -1,188 +1,95 @@
-# CLAUDE.md - Development Context
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-**Transcriber** - A Python-based voice capture and processing system for turning DJI audio recordings into structured, classified documents with smart intent routing.
+**Transcriber** — Python voice capture system that turns DJI MIC 2 audio recordings into structured, classified Obsidian-compatible markdown documents with smart intent routing.
 
-### Vision
-
-A voice-first personal capture system that:
-- Transcribes audio recordings with high accuracy
-- Detects voice triggers and routes recordings by intent (todo, article idea, note, blog)
-- Extracts embedded actionable items from brain-dump recordings
-- Corrects technical terminology via customizable dictionaries
-- Formats output using templates with Obsidian-compatible frontmatter
-- Auto-classifies and sorts transcripts into project directories
-
-## Architecture
-
-```
-src/transcriber/
-├── cli.py              # CLI entry point (Typer + Rich)
-├── config.py           # Configuration (Pydantic V2, TOML)
-├── pipeline.py         # Pipeline orchestration
-├── audio.py            # DJI audio import, file handling
-├── stt.py              # Speech-to-text (Parakeet provider)
-├── llm.py              # LLM processing (Ollama provider)
-├── dictionary.py       # Term correction (YAML dictionaries)
-├── templates.py        # Output formatting (Jinja2)
-├── router.py           # Two-pass intent detection (regex + LLM fallback)
-├── intents.py          # Intent config loading from YAML
-├── frontmatter.py      # YAML frontmatter generation
-├── dispatch.py         # Output routing (append to file / individual files)
-├── classify.py         # Project classification (keyword matching)
-├── builtin_intents.yaml # Default intent trigger definitions
-└── builtin_templates/   # Built-in output templates
-    ├── default.md
-    ├── blog.md
-    ├── trip-report.md
-    └── summary.md
-```
-
-### Design Principles
-
-- **Library + CLI**: Core logic as importable modules, thin CLI wrapper
-- **Pipeline architecture**: Each step is independent and composable
-- **Configuration-driven**: Paths, models, behaviors via TOML config files
-- **Two-pass routing**: Fast regex for explicit triggers, LLM fallback for ambiguous content
-- **Obsidian-ready**: YAML frontmatter with #tags on all outputs
-
-## CLI Interface
-
-```bash
-# Full pipeline
-transcriber process
-
-# With options
-transcriber process --template blog
-transcriber process --sort
-transcriber process --dictionary custom-terms.yaml
-transcriber process --skip-import
-transcriber process --no-llm-fallback
-
-# Subcommands
-transcriber classify <file>         # Classify a specific transcript
-transcriber reformat <file> -t X    # Reformat with a template
-transcriber config                  # Show current configuration
-transcriber templates               # List available templates
-```
-
-## Core Features
-
-### 1. Intent Routing (Router)
-- Explicit voice triggers: "Todo", "Article idea", "Speak to {person} about"
-- Embedded intent extraction from long brain-dump recordings
-- Two-pass: regex matching (Pass 1) + LLM classification fallback (Pass 2)
-- Configurable triggers via `intents.yaml`
-
-### 2. Output Dispatch
-- **Append mode**: Todos and notes appended to `todos.md`, `notes.md`
-- **File mode**: Article ideas and blogs as individual files in dedicated directories
-- Person extraction: "Speak to John about X" -> `Assigned: John`
-
-### 3. Frontmatter & Tags
-- YAML frontmatter on all outputs (date, source, tags, intent, project)
-- Tags prefixed with `#`, underscored: `#claude_code`, `#article_idea`
-- Obsidian-compatible format
-
-### 4. Term Correction (Dictionary)
-- YAML-based dictionaries mapping misheard terms to correct spellings
-- Domain-specific dictionaries (tech, project-specific)
-
-### 5. Templates
-- Jinja2-based output templates
-- Built-in: default, blog, trip-report, summary
-- Custom templates in `~/.config/transcriber/templates/`
-
-### 6. Auto-Classification
-- Keyword/pattern matching for project detection
-- Directory-based organization with tags
-- Fallback `misc/` category for unclassified items
-
-### 7. Configuration
-- TOML config files (Pydantic V2 models)
-- Hierarchy: defaults -> user config -> CLI flags
-
-## Dependencies
-
-- **parakeet-mlx**: Speech-to-text (Apple Silicon optimized)
-- **ollama**: Local LLM for text enhancement and classification fallback
-- **typer**: CLI framework
-- **rich**: Terminal output formatting
-- **pydantic**: Configuration models (V2)
-- **jinja2**: Template rendering
-- **pyyaml**: Dictionary and intent config files
-
-## Directory Structure (Runtime)
-
-```
-~/Resources/Transcripts/
-├── .processing/              # Hidden intermediate files
-│   ├── audio-unprocessed/
-│   ├── audio-processed/
-│   ├── text-unprocessed/
-│   └── text-processed/
-├── transcripts/              # Full formatted transcripts
-├── projects/                 # Classified by project
-│   ├── summit-lab/
-│   └── misc/
-├── todos.md                  # Appended todos
-├── notes.md                  # Appended notes
-├── article-ideas/            # Individual article idea files
-└── blogs/                    # Individual blog draft files
-```
-
-## Current Status
-
-- **Phase**: Feature-complete, pending real-world testing
-- **Legacy**: Original Bash implementation preserved in `legacy/transcriber-bash.sh`
-
-### Completed
-- Audio import module (DJI file handling)
-- Speech-to-text module (Parakeet provider)
-- LLM processing module (Ollama provider)
-- Pipeline orchestration
-- CLI implementation (Typer + Rich)
-- Configuration management (Pydantic V2, TOML)
-- Term correction system (YAML dictionaries)
-- Template system (Jinja2, 4 built-in templates)
-- Auto-classification (keyword matching, project sorting)
-- Intent routing (two-pass: regex + LLM fallback)
-- Person extraction from triggers
-- Embedded intent extraction from brain dumps
-- Frontmatter generation (Obsidian-compatible)
-- Output dispatch (append + file modes)
-- Full test suite (118 tests)
+Pipeline: DJI audio → Parakeet MLX (STT) → Ollama (LLM formatting) → Dictionary correction → Jinja2 template → Intent routing → Dispatch/classify
 
 ## Development Commands
 
 ```bash
-# Install in development mode
-uv pip install -e ".[dev]"
+uv pip install -e ".[dev]"          # Install in dev mode
+uv run transcriber process          # Run full pipeline
+uv run transcriber reprocess FILE   # Re-run LLM on one transcript
+uv run transcriber models           # List available Ollama Modelfiles
+uv run transcriber models-create X  # Create Ollama model from Modelfile
 
-# Run tests
-uv run pytest
-
-# Run CLI during development
-uv run transcriber process
-
-# Type checking
-uv run mypy src/
-
-# Linting
-uv run ruff check src/
+uv run pytest                       # Run all tests (129 tests)
+uv run pytest tests/test_router.py  # Run one test file
+uv run pytest -k "test_name"        # Run specific test
+uv run mypy src/                    # Type checking (strict mode)
+uv run ruff check src/              # Linting
 ```
 
-## Design Docs
+## Architecture
 
-- `docs/superpowers/specs/2026-03-30-voice-intent-routing-design.md` - Intent routing spec
-- `docs/superpowers/plans/2026-03-30-voice-intent-routing.md` - Implementation plan
+### Pipeline Flow (`pipeline.py`)
 
-## Future Directions
+`Pipeline.run()` executes five sequential steps:
 
-- External integrations (Apple Reminders, Todoist, GitHub Issues)
-- Direct Obsidian vault integration
-- Smaller/faster model for LLM classification fallback
-- Quick capture mode for short voice notes
-- Tagging UI for manual classification failures
-- Cross-reference linking between related recordings
+1. **Import** (`audio.py`) — Copies WAV files from DJI device to `.processing/audio-unprocessed/`, moves originals
+2. **Transcribe** (`stt.py`) — Parakeet MLX converts WAV → `.txt` in `.processing/text-unprocessed/`
+3. **LLM Process** (`llm.py`) — Ollama formats raw text → `transcripts/transcript-{stem}.md`, then applies dictionary corrections and Jinja2 template
+4. **Route** (`router.py` + `dispatch.py`) — Two-pass intent detection, then dispatches: appends to aggregate files (`todos.md`, `notes.md`) or creates individual files (`article-ideas/`, `blogs/`)
+5. **Classify** (`classify.py`) — Optional keyword-based project sorting into `projects/` subdirectories
+
+### Ollama Integration
+
+The LLM provider (`llm.py:OllamaProvider`) shells out to `ollama run <model>` via `subprocess.run()` — it does NOT use an HTTP API. Input text is piped via stdin, output captured from stdout. ANSI escape codes are stripped from output. Two methods:
+- `process()` — 300s timeout, for full transcript formatting
+- `classify()` — 60s timeout, for intent classification fallback
+
+Models are built from Modelfiles in `src/transcriber/builtin_modelfiles/` using `ollama create`. The naming convention is `transcriber-{base}:latest` (e.g., `transcriber-qwen3.5:latest`). Config default is `transcriber:latest`.
+
+### Two-Pass Intent Routing (`router.py`)
+
+- **Pass 1 (regex):** Matches trigger phrases from `intents.yaml` at text start and at sentence boundaries (embedded). Person-extraction triggers (`"Speak to {person} about"`) checked first as more specific.
+- **Pass 2 (LLM fallback):** If regex finds nothing and `llm_fallback=true`, sends a JSON classification prompt to Ollama. Parses structured JSON response.
+
+### Configuration (`config.py`)
+
+Pydantic V2 models. TOML config loaded from (in order): `./transcriber.toml` → `~/.config/transcriber/config.toml` → built-in defaults. CLI flags override config values.
+
+### Output Formatting
+
+- **Tags** use `#` prefix with underscores: `#article_idea`, `#claude_code` (never camelCase or spaces)
+- **Frontmatter** is YAML, Obsidian-compatible, generated by `frontmatter.py`
+- **Templates** are Jinja2 in `builtin_templates/`; custom templates in `~/.config/transcriber/templates/`
+- **Date tags** auto-generated from filename stem: `#transcript #2026 #2026-04`
+
+### Dispatch Modes (`dispatch.py`)
+
+Intent configs specify `output: "append"` or `output: "file"`:
+- **append** — Adds entries to a shared file (e.g., `todos.md`)
+- **file** — Creates individual files in a target directory (e.g., `article-ideas/`)
+
+## Key Design Decisions
+
+- Subprocess-based Ollama (not HTTP API) — simpler, but means ANSI escape stripping is required and errors surface as `CalledProcessError` stderr
+- STT providers are pluggable (`parakeet`, `whisper`) but Parakeet MLX is the only one tested (requires Apple Silicon)
+- `article_idea` intent uses file dispatch (not append) because multi-session artifacts need individual files
+- Intent extraction works on both start-of-text triggers and mid-text embedded triggers at sentence boundaries
+
+## Runtime Directories
+
+Base path: `~/Resources/Transcripts/` (configurable). Processing intermediates live in `.processing/` subdirectories. Files move through: `audio-unprocessed → audio-processed` and `text-unprocessed → text-processed → transcripts/`.
+
+## Testing
+
+129 tests, one file per module. Tests use `tmp_path` fixtures and mock subprocess calls for Ollama. No integration tests that require a running Ollama instance.
+
+<!-- OPENWIKI:START -->
+
+## OpenWiki
+
+This repository has a generated `openwiki/` evidence index. It is optional just-in-time context, not required startup reading.
+
+- Treat source code and tests as authoritative. A brief's unknowns and review items are verification gaps, not automatic requirements.
+- Prefer the narrowest quiet validation that proves the changed behavior. Preserve complete failure output.
+
+The scheduled OpenWiki GitHub Actions workflow refreshes the repository wiki. Do not hand-edit generated OpenWiki pages unless explicitly asked; prefer updating source code/docs and letting OpenWiki regenerate.
+
+<!-- OPENWIKI:END -->

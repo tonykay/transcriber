@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d327a994e0e30b40da79526cd7922067e11fa26eba9426816674c91a0d9f550d",
+  "claims": [
+    {
+      "id": "claim_cb10909f0fa34031a4eb5a62b088a9a9",
+      "statement": "`transcriber process` loads configuration, applies command-line overrides, and invokes `Pipeline.run()`, whose normal stage order is import, transcription, LLM processing, intent routing/dispatch, and optional classification.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/cli.py#L38-L107",
+          "version": "repo-lines-v1:sha256:da7ba73dc29cf1bf8fa702c937ca8e7285e889ee0b01a91c5d1ce54ea8f4e9c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0NDhiZGVjZGIwZmVhZDY4M2YwY2I4NjVkNmM5YThiZDcyYTMxNzZhYThjOWY5YWM2ZWU5ZWU3ODhkYjY1NTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjZmRkMGYxZjczZmZlOGU1YmEzM2VmNzMxMzIyMzE0ZDY4Y2JhOTNiODNmNDNmMzgwZGU4NzJkNGJhNjVhZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1NDEyNzMwOWZkZTJiZWUxOWQzODY1MWRkOWU5ZmJiZmQzM2E5MGM2Yjc1ODk4NjY4MzM3N2U1YmNjNzUyOWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzZGYyYWNmMDZlOGMzZjAzYzcxMzVjNmU4YWM1YTljYTU0MzJhYmUwNmE3NGFjYTBmZGQ5YTUzYTAwOGY5ODcifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L72-L110",
+          "version": "repo-lines-v1:sha256:a993b5f0d53d3c328c84f7fc4cec9bcd0b4506c4d1474f471babcff12313a540:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNWZjZDdiMDkyMTE4ZjQwMTA1YjcwNmJmMjRlNWY1MmM1ZjM0OWIxNzViYzNhNzBiOWMzMzM2ZDYwZDQzZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3MmY5Njk1Yzc0NjdjNzQ3NzNjOWNlN2ZjNDI5YzVkMGQwZTQ4N2YzYzUxZDE1ZDY2NjhhM2QyNDA3MmJiOTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNjk1NTk3Y2UzMjNkNjc0MjlhZGM2NDcyZDJmMWM0NWM2MGE5OWU3OTZmNGViNGUyMTY1NTU1YTM5OTk3ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzMjZmMDZkMDdkOThkM2ZkMWM2ZDAyYTViNzYxMzVmYzRmOGNlNDQwZWMyY2YzMWFhMzEwZmZlMmZhZGE5YzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb43e8653c11436f9446e82001e3f52e",
+      "statement": "The workspace derives hidden intermediate audio and text directories under `paths.base/.processing`, while `transcripts` is a sibling user-facing output directory; the default base is `~/Resources/Transcripts`.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/config.py#L9-L34",
+          "version": "repo-lines-v1:sha256:b7460e441750daf1bf788cf29cef382c4c50d48ac5668dcf346bcf0daea3377f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjNmFkYTZkZTY3YzhmOTBlODY2MDdkMmQ0NTkwMGI3ZTkwZjUyNmIwNjY1MDk0YzZiNWQyZDNkNjQ0NzIyMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU0MDEwYmNmM2Q3ZDIwOTcyYjY4Yjc3MmQ0NmUxMzEyZDI1NWU5YjhmZWNhMjVmMTQ2ODQ0OTMwNzAyYWJkYjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzYjExNWE0ZGYwMzg5M2YwNGNhYjUyZGI4M2ZjNWY1ZmZmZjRlNTFjYmMwMjI2MTI2YmNlZjczMGU3ZWY3MzYifQ"
+        },
+        {
+          "resource": "repo://tests/test_config.py#L40-L50",
+          "version": "repo-lines-v1:sha256:d36a07442770b91245a8505db71109c8f52f6e66f5a80110a08687d803a89c3f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5ZmZhNzVmODEzOWZjZDFmMzc4MTI1MzEzZWM2YmNkZmFlZGZiNjM2YmI4ZGI1MjAyYzMyMzFiY2EyMzZjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3MmYyZjYwNWJiMDkxNWNlM2IzZTlkMzEwY2NkMjlhN2E4ODdmODkzNDcyMTRjNDczNjMxY2JjMTc3NGY2YWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4NTk5ODdiZmM0ZGM0M2Q1NjM3YWYzYzVlYmIyOWJiMDQ5NjI3ODA0MGY1NDQxODI2NmU2ZDI4ODJjYjhkNGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwMjQzMjViNTJlZTI3ODg3MDA5MGNkZTY0NzQ4MDAyYTJjZTk1YTgzNWU2OTgxODFiNjViYThhYzY2ZjVmMzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_407e50f7c54d4fb68718133c9a7daf2f",
+      "statement": "When no explicit configuration is supplied, configuration resolution checks `transcriber.toml` in the current directory before `~/.config/transcriber/config.toml`, then falls back to model defaults.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/config.py#L88-L115",
+          "version": "repo-lines-v1:sha256:e0680ab0fc7120b1436e3ba4e88c49706cf76636e27c24e62cef654d1a21d6e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlM2FmYjg0ZjY1ZDA2NzNkM2U2MTc0YjkxYTMzMjRjOGM2ZjVhZjRlZjI0Nzc0OWU4MzA4NjdlNzI5OGRlOTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzYWUxNzc4OTBhMzY0ZjgyY2RlZGUzNWM0MzNhNjk2MGVmY2VhNWFhNDM5YWFhMmNhODA5YzNiNzIyMDE3MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllM2JhOTM0NzljYWU4Yjg5NjhhMjE2ZTdkMzkwYjk5MjFkODU4MWQ2MTVkNTQ5YWU5NTMyMjlhMGU0NjlmZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3f250f3ffea744f7bef452dd0a86566d",
+      "statement": "DJI import scans immediate `DJI_Audio_*` directories for uppercase `.WAV` files, renames only valid DJI timestamp names to ISO-style names, skips collisions and invalid names, and records transfer `OSError`s as failures.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/audio.py#L31-L32",
+          "version": "repo-lines-v1:sha256:c75f6c79f86ef519dde95573cd6d2d41c9df6e4151f24bfd8c122795ec078793:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTljMTJhOWQyYTZhODcyN2E1YTcxZmJkNTEyNzIwYTA1ZjVhMDQxZDIyNjI3MGRjYmM3ZDJiYjcyNDk5YTZkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGQ4ZTJkODc2ZDcyYTQwM2JiM2JhZjk1Y2IwNDhiZmNkYTZmNDVlMDk1ZWQxMzI3N2FhNWNlYzE5ODYwYjUxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzg2ZDQwNzRiN2Q4ZmQwNjAwNDE1OTFkYTJlNjllMTNkNTdjNTNiNWUyMDBmZGQ4MTVjYWE2ZjMyMzI5MjgxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGU0OTkyMjY5MGY0Y2U5ZDY3ODMyMjRlNmNmMTNmMGNlOGM3ZjUxMTRmZjliMDE2OGE5ZWMzNmU0OTUxY2ZmZSJ9"
+        },
+        {
+          "resource": "repo://src/transcriber/audio.py#L74-L130",
+          "version": "repo-lines-v1:sha256:d8957638c2ff090267903958e379b2d1f4066423083a6642e9f33aebf0b9a03e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzOTQ4M2E5ZDkzMWNjYzMyNjBlN2ZkMzJhZDZhMjFlNGE2NTJlMThhNTg3NzQwOTNkZWY1ZWQ0N2QxNTIzYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMTFjMDU2N2QwYTVmOWU5YjEzNWY2NWNkMjUzNzJkZmQ2Mjg3NzVmN2MxZWQyNTNmOGJhZDQyZGQyZDY2NjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxYzVkMWQ5YTdkZTk4YTEwNDFkNDljYTBmYzUxZDA4MjkyOTcyZGJjNDdlMGNmOGVlYTA3ODIzNGJkYWJiYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://tests/test_audio.py#L71-L87",
+          "version": "repo-lines-v1:sha256:3040671326933cfe5ea0b2b54d1cbeabf7c707961ae44878f692688566e9e49f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3MzRkZDA5NmQ3MzNkMzU5OWE4ODY0NjRmMTBmNjVlMTJjZjM0MmRjNzY0NzM5MzZiZjc2YThlMWEyZDhlOTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0NmVjMDc4MDJkNjEzOWQ2ZjBiOWE1MjBjMDRiYTU0MDEwY2RlOWJkODE5MTllNjNmNTE5YjM5MmQ1MmZlN2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmOTdhZGE0N2ZlYWZhOTRlOTAzMWM2NGQ5ZjEyNmM3NmUyODQwZmYxMzVjYzMyYjJkNDNlN2YxY2U1NmQ5MDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b4c769772010438299b9612782029c3b",
+      "statement": "The normal pipeline imports DJI audio in move mode, while the import API offers a `move=False` mode that uses `copy2` instead.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/audio.py#L121-L128",
+          "version": "repo-lines-v1:sha256:bfef5e6e4007b5e8eefa95274f38fbe00353fb8385054827cc7395b9fa40fd16:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTU3ODA1YzNmZTdhYzYzMDc0ZjY5Y2RiMjViOWFjZDdhODY3OTJkZmU1NDA4MThhYzRmODc2NGI0OWU3ZDE0YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDRmMmEwYTBlOTE0YjE4YTA1ZmRlODNlY2ZjMzFjMjRjOTEwZTFiYjNkNzQ1M2ZlMjFmZGM3Y2M2Njk0MDZiOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjRhMzc0MzI1NmVkMjU4YmVlMGQ4NGQ3N2RiYWQ3OTM0MWQ0NzBmODAwYjQ2ODUzNTIxYjg2M2I4YzBkOTlmNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzUyYmJjYTNkY2MxZDIxYTMwMjNhZDFjODc5Zjk3MGQ0MDcwZGE2NmExNWFlZDIwYzkzNmZjYjY4MDNhMWFkOSJ9"
+        },
+        {
+          "resource": "repo://src/transcriber/audio.py#L74-L78",
+          "version": "repo-lines-v1:sha256:eee789f03f315c43f9a109d311d3a323c5dce795ed43e336728eafa3251dfc71:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDM5NDgzYTlkOTMxY2NjMzI2MGU3ZmQzMmFkNmEyMWU0YTY1MmUxOGE1ODc3NDA5M2RlZjVlZDQ3ZDE1MjNjMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTM4NjM3NTkwYTQ3Y2UxOGQ4M2NlOWU1Zjg4MmZlODE1YjRjYWRmYmUzYWI2Y2E5NWNhOTYyNDA0NmE0ZmE0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDFjNWQxZDlhN2RlOThhMTA0MWQ0OWNhMGZjNTFkMDgyOTI5NzJkYmM0N2UwY2Y4ZWVhMDc4MjM0YmRhYmJhZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjNlNzYwYWQ2NDBmOTMwNTFhZWQzMTIwNWNmYzVhZmFhYjc2MTI0MGNiNGE0YzYyNmJkMDg4ZDQ2NDc4NDAwNCJ9"
+        },
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L135-L152",
+          "version": "repo-lines-v1:sha256:c16a28e66563d8a195146b8e213599b0c9e6b5f748ff002f454269bf41e5fe02:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMjZjNDNhNWQ3ZjNkOWUzZjlhMTllNjUxNGIxNjRjYWRlNzFiNTYzNmQwYzU2NTM5MzdmNDc0MmFjM2Q2ZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNTQ2NTAyODMyNzIwZTQ2MDdmMzg4NzEwM2U1OTA0NzU1ODI3MjlmNzAwMzBlYWUzZmM5OWZkOWQxNzRjYzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkMzJjYWQ0NWVhMzY3M2FhOGRjNTA1NzRlMzgzODBmZDcxZTNlNzcxMDY4ZDE0ZmU4MjdkNmZjOWUxZjIwNWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0ZDFhMGU4MGRlOWQyYTdjMWNmNzhiZDhjYjA3YzJiZDNkMWJiZTJjNjIzMGM0NjNjZGQwMThkNWEzNWQ4ODEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e579d070a87d477bbfbb7c40f8bdf737",
+      "statement": "The transcription stage moves an audio file from `audio-unprocessed` to `audio-processed` only after the STT provider reports success; unsuccessful files remain in the unprocessed directory and are counted as failures.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L154-L206",
+          "version": "repo-lines-v1:sha256:cd5a4e8ab75287a16e32865e24c52719f136ab1355810a0bf75c201fade153dd:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhODNjNWY5OWU0NzA5NjVhMTcyMDZhNzdjOWRkMDgwNGJjZmZmMThhMWQzNTNhYjhkNTRhODIyYjdlNDlmYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MzZjMzg5NWZmM2VkYzdjMWYyZTNlMDdmYTZiNDU0NWIzZDA4MDllYzkzOGYxZDNlN2Q4MTNiZjA2ZThkOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5MDE1NGM5MGE0NTA5ODFmZTJhOTk3ZGRiZDVjN2FkNGMzNjI4ZjgzNWIxMjI5NzAxMTYzNGE2MTNlMGJkOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmODIwNTFkY2ExODAyNmFiZmY4ZjNiOTFkNzliNDA4NjE5Nzc5ZTc5ZWMwYzNlMTllMGE2NmEwMTRjMWVlZTUifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/stt.py#L49-L99",
+          "version": "repo-lines-v1:sha256:9e2a3a6f72ba900871c4e9f5b9ecb4f79cdad803b2fc3ff1b8e012a0645abfb5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0ZjdmY2E4ZjUwNjJhMjllYjI3MDYzZGQzZjdhM2YxMzI1NDU4ZjgwZjhiZWI0ZmNhYzcxMmY0MDIyOTcyODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MDMyZTk2NGQwOTMyMzUxZTVkMTg1MjY5MjgxYjE3MWEzYTA5YjA4YjI4NmU2NjFlYTQ3MDMyM2M4MmViNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmZmIxZDk4NzIyMjc1YjQwMzkzOGJkOWU2NGI2ZjQ5YjQzYWU3N2NlN2U5NmE4OGFhMTk2NGNkNWM5NDVjZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjZTJjYmYzMDljYWM4NWY1M2QyZGNiMjUwYTc2ZDY5YzkyZDBlMGM1NTgzYmQ2MzMzNjFmOWEwNGQyNjVhMzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fd14fba801124f7391188f75fb97eaa6",
+      "statement": "`ParakeetProvider` considers transcription successful only when its expected `<audio stem>.txt` output exists after `parakeet-mlx` returns successfully.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/stt.py#L59-L99",
+          "version": "repo-lines-v1:sha256:936561398f9e5c65a5c9cca0788c33db469b7ce42d8aaa348f0340b97250acd0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3ODljMzA1MTY4YTlmOTBlOTYzZWNhN2Q5ZWE4ZDkzNTk2YWRkNzZiMzgyM2U3ODBmMzcxY2NmZmFhOTMwZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MDMyZTk2NGQwOTMyMzUxZTVkMTg1MjY5MjgxYjE3MWEzYTA5YjA4YjI4NmU2NjFlYTQ3MDMyM2M4MmViNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmYmE1MTdiMTEwNzViNzhkMWI3ZDBiZDA2M2ZiYzc3MzJmMjNhZjJiNTAwNDMzN2Y3NWU4MzQ3NGViZDkyZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjZTJjYmYzMDljYWM4NWY1M2QyZGNiMjUwYTc2ZDY5YzkyZDBlMGM1NTgzYmQ2MzMzNjFmOWEwNGQyNjVhMzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1e7a6172423e4750aebf81f49a1377c0",
+      "statement": "For each raw text file, successful LLM processing writes `transcripts/transcript-<stem>.md`, then the pipeline overwrites that output for dictionary correction and template rendering before moving raw text to `text-processed`.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/llm.py#L60-L118",
+          "version": "repo-lines-v1:sha256:9eb3ea58f411d3c567395b5c135bb641503f834e3690ca5ec74d2f093b23f376:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhMjBkNDUxMDg1NmYyZWM5NGVmZDI3OTJiMWVhYWFjY2JmNWNlOGIxMDdhN2RiYzRlNGM1NWVmZDIwMGY2NzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MDMyZTk2NGQwOTMyMzUxZTVkMTg1MjY5MjgxYjE3MWEzYTA5YjA4YjI4NmU2NjFlYTQ3MDMyM2M4MmViNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3MjdhMDE1MjYxNGU0ODgyNWRkZDNkZTQwMzY1ODcxYmU0ODcwODdjNjhiODJkMTlkOTg0YjRhYWM2YjIzOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhYThjYWYwYWZiMGExMDMzMDM4MjNhZTViM2M1NjdjZWRhZGY5ZDMzY2IyYWIwOTA1YmVhN2UzZTExZTY2ZjcifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L208-L285",
+          "version": "repo-lines-v1:sha256:51a9b842e4c089281ad4f43863f4f91c8dcaa538fcbea946e2650c7ac14bf7fb:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxNGE3YWM2ZGZjODE5ZmVjNWU0MWVjZTE0OGYyYjI1NDM5MzU5MzVmN2RjMjA4Yjc3M2E1Zjg5MTllNDBiYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhODUyNzNhM2UwZWYxMDg4OTg5Mzc5OWNiZjJiYTkwMGQ4MTQ5ZmQyMGVkMGEyMzMxN2ZkMzgxYmQ4YTE4ODgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlMzM3NGE3OTdhNjExNDliYjdkOWMzMDNjYTU5NDFhZjkxYTZlNmUwYTcyM2Y0MTlhNDBiNGJkMmYyMjNjNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmNjFhMjVkMGYxMmJjNzUzOTA2ZTkxNzk1ZDZmZTU5M2ZmMGY5MmY2NDQ3ZGU1OGZhYWNhNmMwMWFiYmRmYmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_957b81c205564916a29261cffd84ef16",
+      "statement": "The current provider factories implement only `parakeet` STT and `ollama` LLM; selecting another accepted configuration literal reaches an unknown-provider `ValueError`.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/config.py#L36-L48",
+          "version": "repo-lines-v1:sha256:c3e7a3b857c46bc1fcd40357204cc88f5a22cce444ec903b1d4c5f329f15ff70:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0ZDJjYmNiNzgzNjUwMTUyY2I2Mjg2N2Q4OTVkMTk1YzFmMTQxNmZhYTg1NzQ4YzdjNGJkZmIyZjdmMmQ4Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxMWQwOGM1MTJjN2RiMTIwMjY3NmUzOWU1Y2VkOTY1NzkzM2JkNjNjYjNkOWU1MzM2YTQwYWQ5NDA4MTljYWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjMGU3MmFkMjgzZDY0M2M1ZjA2NzM4M2EzYjFlOWYwMmE2ZmM1NTQzZTQ3MmE5OGNmZjkxZDkxMzBlYjJhNDcifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/llm.py#L142-L158",
+          "version": "repo-lines-v1:sha256:aba2b0d4f63feff82c2299c4f79121f2fb087f031dab3f899f72236bfc958b73:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4ZWY1YWZlNDYyODI5MzdkYjAxMDgyZWNiM2YxMDdjZTEyZWMxNzQzOWU1N2M0ZjFlYWMzNzIxODRjNTllMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlYmJiZDlkZWI2ZWNiMGRkZWRkODNjODZlZmViY2Y0NmEwYmY1YTM4NTI2YmZhNjhmOGE0MzBlOWI4OTE5ODIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyMTQzMDJmNWFlMmI5ZjNiOWMyZDEyNjE2YjQwM2M4MzgxODc0OTEyMGY2MjhmZDY0NGJmY2JmYTM5MTI2ZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/stt.py#L102-L122",
+          "version": "repo-lines-v1:sha256:bc1538e59b77bba97f294633f9f9d2af8c7e77c5eea9bfe644454cb114270c40:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3MzkyNzc3MDkzMTI5NjgwYzM3MjhlZWI1OTg3MGY2MzI4OWQ5MjJiZTRhNmU5NzUyOWZmZDM2MzM4YzhhMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllYzRjYzliMjgxOWU0YmEzNmMwMjgwMzhlNDZiMDJmMTg2OTRhYjk1MGUzNGMzZTZmNDVjZjQ5YmM0ZDk3YmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2ZGZiZjQ1M2Y3ZjFiZWJhYjcyODM2MWIwZjM5M2VlYjRjMWZiNjY4ZjllYTIyYjkxNmRhY2Y1ZGZmODFkODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_750fd12a899048b98f8e78ee9a2906f4",
+      "statement": "Template rendering searches extra directories first, then the user template directory, then packaged templates, and receives `content` plus a metadata mapping; the normal pipeline supplies source-file and date-tag metadata.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L263-L274",
+          "version": "repo-lines-v1:sha256:98321f8a5363e57d71d8cd743a7535e8abeb2e0471ae8194ac4aeafb326c5193:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwY2QxMzM4YzAzNjgyMmFmZDBkNmZkM2Q4NWQ0MDZkMjdjNGU5Mzk3M2VlMmJjMjEzM2I4N2I4OTI5ODg5OGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2ODVhMGIzZWQzMTk2MTEwNzNiNTc0YzI5Yjc0MzlmYzNiOTBkMzdlNjI2MzJiMzg4NDAzMjEyOTY1MWZhNzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2ODk0M2YwZTg3NTE4NzQ0NTAwZjI2YTM4ODlkYjc2ZDc4YTA2ZWU1Y2U4OTAyYzllYzVmODZhMzEwNGE2Y2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyMzFkNmE4NjRkNTQ3M2JmZmVjZDk4YmZhODRkMDI4ODc3N2QxMzc4YzMzZTdmMjk3Mzg5ZTI3YjUxMjc3NjIifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/templates.py#L12-L36",
+          "version": "repo-lines-v1:sha256:817cd3291cc3e04bbdfdee71a71ab930769c9f3b5979757a35139a8df11e57cd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4ZDZlZGVhNTU3NmMxNTM1NjRhZDgyYjQ4MzdmODk2NzM3NWEzZWNhNTgwOGU1MWM0MDVmNjY4ODMxMWQ4NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmNjk5NzdkMDA3ZjAzMTUwZWNjNzJiNDZlY2YwNzJjMmNjMmQ5ZTQwYmQ0MDlhZmQ0MjlkNDJiZTcwNzYzNjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhY2E0ZTA5MjYxNmE5MmNhY2IxMTQ5ZmI5YmIxZjFmZWVjMjk2NTAwYjU3YTFiZjFiZmIxNmE5ZGViMDcwOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkZWI1MDMwMjViM2ZkOTU3MTYwZjc2NTcxODZiY2RmNjY5YTY0OTk2Zjg2NjNiMDVjZjY2MDUzMTJkY2FhNDMifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/templates.py#L59-L86",
+          "version": "repo-lines-v1:sha256:771741a38f46591feba1c337173b7f774955bd953534a629cda28714c48f4134:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MzFjYTlmODE4OTg1YWFmYjc5NDg3NDU4M2E1ZTM3OWNhNjA0NmE2MDJhMTBjOGI4NzlmYzdkMTNiYmE4MzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNGM4NjRlZDFmYjcxNTY2NjFlMzU3OTk1M2M1M2IzZGRkZDdlZWI2M2NlYzljMjA4NzkwNTJjZjViMzc1ODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYzRhN2QxY2M3OTZhYmEzZTQ2NzIzMzI3ZjUxN2U5ZjgxMTk4MmQyNTBmMDcwMjk4NmU0YjU3NjRhZDk1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2YWI0MTRjZGZiMjEwZjNiYTM3MmZiZTJiMjdmNjkzNDFjZjgxZmRmN2IwMjNlNTQ3MjFjNTlhN2MwYTY1ZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_39f1cefbccfb4dc4a45818f3906bafba",
+      "statement": "Routing scans every direct Markdown file in `transcripts` on each run and overwrites each file with a newly generated frontmatter block followed by its full prior content, so it does not merge existing frontmatter or provide rerun idempotency.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L295-L356",
+          "version": "repo-lines-v1:sha256:8c71cd2ae28728c928aff46d359d6bf350b688004e4a4813bcb41af7fc9b2ad0:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMGM3ZDQxODFjMzM0ZmYwMWNmODEwMzUxMDU5MGE5NDg0NjAwM2ZlNmRmYmEwOWMyMGM2YjgyODg5MDdjMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwYzM5NmQ2ZmUyOTAyNzc3MjU2OGIwM2JmZGE3ZGI3MDk2MzQ0NDc2MmJiYjUzNjJhN2ZjNWY1YWY4YWU3MWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3NGQ3MmRiODgxNmMzZTE0MTE0MTdhMGE3ZjQxNjFlOTg2ZWJlMjA2NmQ4ZWQxOTZlMDdkOWQ2OTM2YmIzNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0OTMxYzc4NDEyMzBlYTAzZWJjNDJmM2I1Yjc3YjY4ZWM4ZDEwZTZkMjk0NmMyMDIzNWFiMzBmZDc1NzBhN2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_af1a4f4f0bb04188b2c89b4527cb3ad9",
+      "statement": "Routing uses current time for generated main-transcript metadata, derives the source filename from the `transcript-` stem, applies optional classification tags, merges intent tags, and deduplicates them in first-seen order.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L319-L356",
+          "version": "repo-lines-v1:sha256:443831be0d6cfc71865eeb77269d4f811bf8459fe25aba337aa8e2203d798708:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3YzBkYjU2NjM2ZDU0MDRkYjY2Zjc0YWM2M2MyMjhlZWYyNmJmODY3ZTIzZmZjNWY0YWRiZGRkYTU5NjE3M2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwYzM5NmQ2ZmUyOTAyNzc3MjU2OGIwM2JmZGE3ZGI3MDk2MzQ0NDc2MmJiYjUzNjJhN2ZjNWY1YWY4YWU3MWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3ZTQ5ZDA2MDc0YTdkNmQ1Y2NhNThiMjNlOGViYTYwOWM5MzEzYzdiYjlkMDBjNzI1YTU4Y2U3YmM4NDIwOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0OTMxYzc4NDEyMzBlYTAzZWJjNDJmM2I1Yjc3YjY4ZWM4ZDEwZTZkMjk0NmMyMDIzNWFiMzBmZDc1NzBhN2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1b2c3f60f9944815811b0345d157fa7b",
+      "statement": "Generated frontmatter contains ISO timestamp `date`, `source`, and an ordered de-duplicated double-quoted tag list, with `intent`, `project`, and `assigned` emitted only for non-empty supplied values.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/frontmatter.py#L6-L29",
+          "version": "repo-lines-v1:sha256:a569206f32a247b6f6392c6e7e29c36d4827c6512abb43acd3199bcb1ddab5e8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OGU3NTA1OWVkYjYzZGViNDczMjRkOWY5MmNjMGRhNjQ0YWQwNmRmNTUyYjU2NGNhMThiYTczNWZlODM0OTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkNzBiYjg4NWNiOTJiMWQxMGJlYTVmYTExNWU1ZWYxNzgxZmQ5Y2ZjOWY3NjE4M2ZlM2FhMTg0ZTllMmIxMmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkYjNjOGU5OTAwODUzNDQ4YjAxOGMzNTMyMDA3ZDUyMjVhODYxYzliYWI0NDZmMzYwMDliNjhiNTU3NTAyZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVkOTIwZWUwYjZmZTM4NjM1NWFkY2IzMjI4ZjVkZDIxYzZhYTViYmJmNzIzMjllZDQ1OWQ0ZjNhNjdhZjBmODAifQ"
+        },
+        {
+          "resource": "repo://tests/test_frontmatter.py#L8-L63",
+          "version": "repo-lines-v1:sha256:297193ede548901ea639917e8518417e021322864537d11b65fc12262910606c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZjk3MTg1ZmEzY2EwMjk4NWZkZDZhMDVmNzkzMTJhZDYzNWQzMWI5NGM0OTIyOTA5YmYxZDczYTg0MWEwNDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjODMzNzUzMWIwNDM1ZmM0ZGI1ZDVlYTEzN2M4ODU0NzY5ZjQxYTFjNDU1MTc4YzczYjEyMWU2YzVhOTM0ODQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdmOTg2MjBjMDhjMTMyYjMzZGZjNGMwMzRiYjJjYzc0ZDkyYjM5ZjRhMzI1ODBkY2M1MWY2ZjJmODgzYjA4MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMmM0MmE3NmYwMzk5ZmEwYTY5Mjc3YzUxYTVmYWQ3MTk1ZWUyZjE2ZDBmZDI2MzY4YWQzMDY3OTgyMDU4ZDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_02584dffcc8c479c8b606374459ad84b",
+      "statement": "Append dispatch creates parent directories and opens targets in append mode, adding a checklist entry with timestamp, source, and tags, plus optional assignee and embedded-transcript reference; it does not replace existing target content.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/dispatch.py#L11-L44",
+          "version": "repo-lines-v1:sha256:f9ebd6e68e6829e3cf0edf330be5998c2361a7ed1e5afaa0708e80d0e327704a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzNTMwNjc5MGFlZmIxMWNiMWEyM2E2ZjU5MzU3NjQwYzE1N2NlNjk3MmY3NzYwZjM1YWQ5NzI1NTBhY2RjZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxNzhmYTZlYTU4MzY5MmZmMzg4YzFjZTYyZTBjMzBiZDBlODgyYjU3ZTJmMjY1MzRjOWQzOGNjMGE4YjJlZjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlYmNhNTM3MTk1MzRkM2U5NzY5MDBkOTA5ZTg5NGFlNGJjMTFhNjRkMTAxYjE1MjdkMTgyY2MxMmMzNTQ2NjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjOWY0OGZkMWJmOTVhYTUxOWM1MDNhY2Y2MTRmODhkY2Y2NWI1ODExZTVhY2NhYWY2OThiZDM0ZTc4MTlmMGIifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/frontmatter.py#L32-L47",
+          "version": "repo-lines-v1:sha256:1c63e51b0bbc9748959c9c944ee8e4da370644bee0ab95d9df4dc0b17949cf53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0MzJlODVmY2ExODY0ZWY2ZWJjNmU0Mzg5NWE0ZDJhYzAyZjJiZTdmNjM3ODg3MWEyYjI0NDQwYWM2NTNiMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkNzBiYjg4NWNiOTJiMWQxMGJlYTVmYTExNWU1ZWYxNzgxZmQ5Y2ZjOWY3NjE4M2ZlM2FhMTg0ZTllMmIxMmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3NzQwODkwMGFmNDZhMjQ3MWQ5YTUwNzY5NWQwMzMwODc0MGRkZGI5MGZmNDkyNjA4ZjQxOTE0ZDMwYjBkZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://tests/test_dispatch.py#L27-L73",
+          "version": "repo-lines-v1:sha256:89aa31a94863f4ff6965b0668af43a5e0b55d171d2923ce65665b168c301ce0e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkZTMyMTIxMDZhMjhkNGVkZTE0YjI5OGE1NWNkMjcxYjY0NzI0ZWM2MjYwOGY4NTI4OGE3MjQxMmMyNzg1MjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1YzVlOWEyNWYxZGM2ZjMyOWJjNzcxZDBkOTUyZTM5Njk4ZDlkYTY5MjZkOGZkNzdmNzk1N2EwNjQzOTc0ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5OTBhMTM0NThjZmY1ZDFlNTMyYjJhMTUwNDc0ZTc4YzYxM2NjOWY1MTZjYWQyOGEwMGE0NmFhZjEzYTBkYTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5OWUxMDVjOGUyODhjOWVhZDViYzBiOWI1YmZiYTQzY2M1MjUyNWIxMTI0Y2U0ZTU1MGYzNmFjMGMwNTUxZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b24e798138144b968f485a7400669f80",
+      "statement": "File dispatch creates or overwrites a date-prefixed, slug-derived Markdown path and writes generated frontmatter plus the complete supplied transcript text.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/dispatch.py#L47-L93",
+          "version": "repo-lines-v1:sha256:1e795612700a29d456226a8ee25e16d1c227ff1dbd09dd2dece3da252a423fd7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZTRkZDk3NTQ0MTE4OWYwY2FjYzQ1ZGM1ZmU0ZDk5Nzc0OThjZmNiZmM0Mjk3NzIxYzNhZjA3OGY3MTAzYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkYzZjYzMyMjllNTEzZmJlZWNlYmFkMWFmOTdjZjcxMWMwMjgyM2ViODRhYWU5NGI4OGExYTVlNjc0YjQxMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhNjE3YzJkMTQxYjhhNmIwMWUxNmNhNzg2MzAwYzY0NjhmNjcwYzJjZTZhODMwMTc2ZTI4Y2JkZDAwMTVlZTUifQ"
+        },
+        {
+          "resource": "repo://tests/test_dispatch.py#L76-L109",
+          "version": "repo-lines-v1:sha256:9fd33a70784541fbbce2d74480dd0ae7eee0a2ac42cc12f8c53927e28e884257:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkNTJhNzdkYjMxZjgxNjA3ODZjNjNjMzA1YTYyYjMyNDRmY2U1NDRlNTdkZGQ2YTE2MTFmMWNkNWNkMzEwYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMzAwZWVkNjJlZDY4NmM4NTliNDViMTQ1YjAwMDFmODUzYjMyZjU4ZjUyOGFiODZkMTQ4Y2Q1ODZmMGQ0NDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkNzg0NmJhN2M0MWU2NDYwZWEzNTk5NTNiMWQ3MTk2MzE5ZjMyZGU0NTE3ODNiMDJlMDdjYWNlOGIyNDY0ZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_53002fc9f87440a7b12e4055e4f66e2e",
+      "statement": "Project classification is ordered, case-insensitive keyword substring matching: the first matching rule determines the project and tags, while no match becomes `misc`; the sorter creates a project directory and by default moves the transcript, with an opt-in copy mode available.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/classify.py#L58-L120",
+          "version": "repo-lines-v1:sha256:fb2335853f8f1521cb1e58fed8e0c1c88318548ee65a0d063fa116c2e59cb4be:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3NjAzMjE0NmU1OGY3NzYxOGYwNGJlY2MyMzg3YTRlZGExNTE4YWMwYTgwYmZhMjU2OGM0NWU5YjBkYWRhMGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0OGQ2MzljN2U3MDk0YTdmMTQxZDFlNTNiYWI4OWY2NzRmN2JjMGEzMTA4Y2JkNDVmNjg4MmRjYTRlYWFkM2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0NDJhYTQ1ZjMxZjM3MDEyMDRiYTM1MzBmZDUzYjRlMDkzNDRhMzM1ODFlN2EyZDA4MDkyZWY1YzBlN2U2ZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMifQ"
+        },
+        {
+          "resource": "repo://tests/test_classify.py#L34-L41",
+          "version": "repo-lines-v1:sha256:df3d1ddd711652fb7b04ca533db4f479d046103a9b9de70dbe6d4a551d4e323d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2YwNjU0ZDYxOTM3OGI1MjZmYjNiODY5MDVmZGZhNThjMjRkNDEzNGVkMThjZmI5OWY3NDY2ODlkMThlZjE4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTUzYmRmMDk0MDc1ZjNiNTM1MjIzNzE5OWU1MjM1YThmOTFkYmViZDBmOWRjZWRlNGNhYjhjNjhmYWExMDY1NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGE5MzI5MzNhYmI0YzkwNWZjOTZkYTI0N2FhOTViNGEzMWFlZmMzZDNiMmI4YWZiNWUzZmJhYzAxYzU0YTMwMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2M2ZTA5YTc4ZTJhMzRlNTNlZThkZDk3MTliZGZmMjdjMzg1ODMyZDhmZjAyNWQ0NzNjZWViYTZmMjRiODBiZCJ9"
+        },
+        {
+          "resource": "repo://tests/test_classify.py#L67-L112",
+          "version": "repo-lines-v1:sha256:907609a3044d97eb5d6b0389d310f8a4f12c4a9a0f854e7c299b32736565090b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhMDM3MmMyNTI0ZjdhYzM3MmZkMTM4ZTIzZDhkODdkNTc4NmJiYTVmZDU2ODg3OWE0ZDAwMWU1NGM3MzYwZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhODIwNGI4MDE0YzRlNTc4NjNhOGE2M2MzZWQyOTlkMjIyNTc4N2UyNWM2NjE0ZDI4YWQwYTAxNzgxNmYzZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4ZDQxMzVjMjJiYWZhODZlNzdjYmVlZDhhNDE4NzM5M2I5YWZhYmExOWNjNjRmY2VhZDczMDU1YzgxNTc1NzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ebc0c34b814f4bb786c7f03247c9f05e",
+      "statement": "The pipeline runs project sorting only when classification is enabled and a configured rules file exists; it uses move-mode sorting into `paths.base/projects`, after routing and dispatch.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L103-L108",
+          "version": "repo-lines-v1:sha256:64e1cdf1168df9609860ca6c6d5f108feb3e0834efa4082788ade406c98ac17c:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWRkNWRjNWYyYjE3YTJkYWMxOGVlNmVjN2Y1ZTdhMTQ3NjAzYTY1MTk2NjMxZDU2Y2NmM2EwZGMyMzViY2YwMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTU2YzBiZjAxNzE0MzM4Y2Q0ZDNlZWU3MjE2MTlmMzVhMzY0MTc1ZDZhZmNkN2RjNjEwOWYwNmQ0MmM3ZTYzNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjU4OGNiYzZiYzZiZjUyMjZlYzYyZDM0ZjRmODc1ZTI2OTU3Y2VlZjIxMmJiMGQxYjMzODc5NzFkMTJmZWQ2OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDZkOWQwM2UwMzc3YWEzMDgzMjk1YjljOTU3MmYxOTA3MDdlNjljYzU3NTU1ODBiM2U1NGJmM2IxYTQyN2VjNyJ9"
+        },
+        {
+          "resource": "repo://src/transcriber/pipeline.py#L398-L434",
+          "version": "repo-lines-v1:sha256:a7c9de8bff0e340ba5435119040dbbc95232116e6ec8e42239b43490e3947bf3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjYmFiMTM5MDkwZjI1Yzk1MGRkYzJiNTE3MDY2MjJjZGI3ODQxNzkzM2JmYmMzODg3ZjE3MDdhOGZhZDJkMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzYmQzYzA5Yzk3OTAxNjc0Y2I3MzdlNzI4Y2YwNDYzMDY0NmM5N2ZiYWY4NGU5MTQ4OGEzNzMyMzgxNGE4ZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMmVlMWFkMmI5YzM1Yjk2MWJlYmMyMGZkNGFhNDI0YmY2ODIxMTUwMDNjOTc4NDZjY2IxNzAxYTdhNjRmZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhMmFiMWYyNTJkYmRjNDdmNzA0ZWVjODU5Njk3ODI5ZWYyNzMyYzhkNmY4NzBiOTUwMGVkNjIyYzU2NmNmYzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4dcf8fde7e5b4529b9fe91458ae214ac",
+      "statement": "`reprocess` can move processed raw text back to `text-unprocessed` and deletes an existing transcript before checking LLM availability; after successful reprocessing it moves raw text to `text-processed` without routing or classification.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/cli.py#L156-L261",
+          "version": "repo-lines-v1:sha256:7a44861a03e293e0ae462b883fb9f67abcf5745c99f1aae862259c3370dd4d93:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0NDQ4YmRlY2RiMGZlYWQ2ODNmMGNiODY1ZDZjOWE4YmQ3MmEzMTc2YWE4YzlmOWFjNmVlOWVlNzg4ZGI2NTU3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhNDM2MDZkN2MwNTkzYzBlMDhmZmRlMjI0OWQ0NTAxZTFjOTJhMjU2OGQ5NmU2ZmI2MWJmNzc5NzcyNzQ5YzdjIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2ZWU2ZGZiZDRiZGIyMGQzMTdhZGExZWYyMDhhZWY0ODhlZTk1NzAyNTY3OTNmMjg0NzU4ODI2MGNjMzY5YzcxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkNjM2MjkwMWY1NTdmOGM4NjhiYTdiM2I4MWM1MzM3N2FkNzFiOTEyMTlkOTBmZmU2ZGE2NDk3M2Y3N2VjZGU4In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_44082d534ccd4614ab89f4c52db80bb5",
+      "statement": "`reformat` reads a specified existing transcript and overwrites it with template-rendered content, without frontmatter-aware preservation.",
+      "evidence": [
+        {
+          "resource": "repo://src/transcriber/cli.py#L264-L287",
+          "version": "repo-lines-v1:sha256:d54d7a0d9684bfec9aee4f790445657c96b422e40ebe41aa747e929b6057efcb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0NDhiZGVjZGIwZmVhZDY4M2YwY2I4NjVkNmM5YThiZDcyYTMxNzZhYThjOWY5YWM2ZWU5ZWU3ODhkYjY1NTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlMDUzNDkzMzQ2MzNhM2Q0ZDQ1YjM5MThkMDYxMDgyM2UxNmU1MzE3MmFkYjNhZWI5NDc5ODZlYzNiZDM3MGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4Yjg5MDlhYTJlZGM5ZTllODMxZTI1ZTQ1MDQ1YmMzMjgwMTdiOGQyMzg3YmU3N2ZjYTY5NjVlOTFjYzA3ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwMDQzNjMzN2IxN2M0ZDZkMTY3MmVlNzc2YzM1ZjY4NzVhMzc2ZjczNGNlOWViYTk4ZjExMDk5YmExZTIyOGEifQ"
+        },
+        {
+          "resource": "repo://src/transcriber/templates.py#L59-L86",
+          "version": "repo-lines-v1:sha256:771741a38f46591feba1c337173b7f774955bd953534a629cda28714c48f4134:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MzFjYTlmODE4OTg1YWFmYjc5NDg3NDU4M2E1ZTM3OWNhNjA0NmE2MDJhMTBjOGI4NzlmYzdkMTNiYmE4MzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNGM4NjRlZDFmYjcxNTY2NjFlMzU3OTk1M2M1M2IzZGRkZDdlZWI2M2NlYzljMjA4NzkwNTJjZjViMzc1ODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYzRhN2QxY2M3OTZhYmEzZTQ2NzIzMzI3ZjUxN2U5ZjgxMTk4MmQyNTBmMDcwMjk4NmU0YjU3NjRhZDk1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2YWI0MTRjZGZiMjEwZjNiYTM3MmZiZTJiMjdmNjkzNDFjZjgxZmRmN2IwMjNlNTQ3MjFjNTlhN2MwYTY1ZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_de378441bce54737a1349ea701891c5b",
+      "statement": "End-to-end tests exercise mocked full processing, `--skip-import`, unavailable STT handling, and creation of the processing directories.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_e2e.py#L32-L244",
+          "version": "repo-lines-v1:sha256:8c55875c5fbd66398d7dd2dd3ba97e6d7e36294cd9f9721d7700521b70fdc4c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1ZTE3Y2M3YjhhNWVjMDA0NzViZTJkMzlkMmRhY2QxYTQyNTFkYzU3ZjkyMTc4ZTY4NzE0YjM1N2I4YTI0NTUyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhZGM3ZGRkMTViNzdmMTJkMzBjODlhMmRkMTdmOGU4N2ZkMThjY2QxMTE0YzVkMjNiZDViMjU0ZjE0YTkwM2JmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0ZmJkMDA5MzE0YmMyNzA4NDE2NzM0YTAyYWU1ZmYzOWExZTQ4YTA1MGJlOTFmNDNiMmZhYTkyMDAyYzYyYmZjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3YWJiNGE1MDUzNmQ4Y2NlMDIyY2QyMDY4ODlkOGM2Y2ZlYjczYTRkMGE3ZWVlZmUzYTIwMmEwOTQzN2NkZjc4In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-30T00:20:41.777Z"
+  }
+}

@@ -9,6 +9,11 @@ from pathlib import Path
 
 ANSI_ESCAPE = re.compile(r'\x1b\[[0-9;]*[a-zA-Z]')
 
+# Some reasoning models (e.g. muse-glimmer) have no "think off" switch and
+# emit their chain-of-thought as plain text ahead of the real answer when
+# run via `ollama run` instead of the chat API's separate thinking field.
+THINKING_TRACE = re.compile(r'\AThinking\.\.\.\n.*?\n\.\.\.done thinking\.\n+', re.DOTALL)
+
 
 @dataclass
 class ProcessResult:
@@ -78,8 +83,10 @@ class OllamaProvider(LLMProvider):
                 timeout=900,
             )
 
-            # Write output, stripping ANSI escape sequences
+            # Write output, stripping ANSI escape sequences and any leaked
+            # chain-of-thought reasoning trace
             cleaned = ANSI_ESCAPE.sub('', result.stdout)
+            cleaned = THINKING_TRACE.sub('', cleaned, count=1)
             output_file.write_text(cleaned)
 
             return ProcessResult(
@@ -128,6 +135,7 @@ class OllamaProvider(LLMProvider):
             timeout=60,
         )
         result.stdout = ANSI_ESCAPE.sub('', result.stdout)
+        result.stdout = THINKING_TRACE.sub('', result.stdout, count=1)
         return result
 
 

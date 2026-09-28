@@ -1,0 +1,5 @@
+{"docId":"pi-de54fe26df2d550d060d2ef9","sessionId":"01a0501f-b33f-7599-aaa5-a523a07f0670","firstId":"b087827b","lastId":"bf62eb50","reason":"shutdown:quit","ts":"2026-08-30T00:45:26.973Z"}
+{"docId":"pi-84f44ac92555c53895ae3206","sessionId":"01a05021-11f1-7627-8bd2-078869031b89","firstId":"a40ad614","lastId":"29a65e38","reason":"shutdown:quit","ts":"2026-08-31T16:03:04.777Z"}
+{"docId":"pi-6b4b312612a02baa5fb04b2f","sessionId":"01a0acd3-adf3-757d-88f2-854d7ea906aa","firstId":"45d180c5","lastId":"32849f48","reason":"compact","ts":"2026-09-17T00:56:18.613Z"}
+{"docId":"pi-3cbca52900ffb8777ab7a253","sessionId":"01a0acd3-adf3-757d-88f2-854d7ea906aa","firstId":"ef68dfae","lastId":"d739d89b","reason":"compact","ts":"2026-09-17T01:41:13.333Z"}
+{"docId":"pi-6165b9448728155d9db34d66","sessionId":"01a0acd3-adf3-757d-88f2-854d7ea906aa","firstId":"e5eeee27","lastId":"329d78b4","reason":"compact","ts":"2026-09-17T01:47:13.283Z"}

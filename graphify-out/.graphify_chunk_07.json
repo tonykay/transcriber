@@ -1,0 +1,684 @@
+{
+  "entities": [
+    {
+      "id": "paragraph-reformatter-feature",
+      "type": "FEATURE",
+      "name": "Paragraph Reformatter",
+      "properties": {
+        "spec_id": "001-paragraph-reformatter",
+        "status": "COMPLETED",
+        "model": "transcriber-reformat",
+        "base_model": "llama3.3:70b",
+        "model_size": "42 GB",
+        "temperature": "0.1",
+        "purpose": "Format raw text into structured paragraphs with 100% content preservation"
+      }
+    },
+    {
+      "id": "modelfile-reformat",
+      "type": "FILE",
+      "name": "Modelfile-reformat",
+      "properties": {
+        "location": "Modelfiles/Modelfile-reformat",
+        "model_type": "llama3.3:70b",
+        "temperature": "0.1",
+        "top_p": "0.9",
+        "repeat_penalty": "1.1"
+      }
+    },
+    {
+      "id": "reformat-transcript-script",
+      "type": "SCRIPT",
+      "name": "reformat-transcript.sh",
+      "properties": {
+        "location": "scripts/reformat-transcript.sh",
+        "purpose": "Batch processing support for paragraph reformatter"
+      }
+    },
+    {
+      "id": "test-data-samples",
+      "type": "TEST_SUITE",
+      "name": "Test Data Samples",
+      "properties": {
+        "location": "specs/001-paragraph-reformatter/test-data/",
+        "total_tests": "8",
+        "passed": "8",
+        "failed": "0",
+        "success_rate": "100%"
+      }
+    },
+    {
+      "id": "sample-single",
+      "type": "TEST_CASE",
+      "name": "Single Sentence Test",
+      "properties": {
+        "file": "sample-single.txt",
+        "word_count": "15",
+        "purpose": "Verify very short text returned unchanged",
+        "preservation": "100%"
+      }
+    },
+    {
+      "id": "sample-technical",
+      "type": "TEST_CASE",
+      "name": "Technical Content Test",
+      "properties": {
+        "file": "sample-technical.txt",
+        "word_count": "197",
+        "purpose": "Verify technical terms, URLs, and code preserved exactly",
+        "preservation": "100%",
+        "special_content": "URLs, code blocks, technical terms"
+      }
+    },
+    {
+      "id": "sample-factual",
+      "type": "TEST_CASE",
+      "name": "Factual Content Test",
+      "properties": {
+        "file": "sample-factual.txt",
+        "word_count": "209",
+        "purpose": "Verify dates, numbers, and statistics preserved exactly",
+        "preservation": "100%",
+        "special_content": "dates, numbers, percentages, addresses"
+      }
+    },
+    {
+      "id": "sample-continuous",
+      "type": "TEST_CASE",
+      "name": "Continuous Text Test",
+      "properties": {
+        "file": "sample-continuous.txt",
+        "word_count": "245",
+        "purpose": "Transform continuous unformatted text into paragraphs",
+        "preservation": "100%",
+        "output_paragraphs": "4"
+      }
+    },
+    {
+      "id": "validation-scripts",
+      "type": "VALIDATION_SUITE",
+      "name": "Validation Scripts",
+      "properties": {
+        "location": "specs/001-paragraph-reformatter/validation/",
+        "scripts": ["check-preservation.sh", "check-quality.sh"]
+      }
+    },
+    {
+      "id": "check-preservation-script",
+      "type": "VALIDATION_SCRIPT",
+      "name": "check-preservation.sh",
+      "properties": {
+        "purpose": "Word-for-word content preservation verification",
+        "method": "Extract, sort, diff word lists",
+        "exit_codes": "0=match, 1=modified, 2=usage_error"
+      }
+    },
+    {
+      "id": "check-quality-script",
+      "type": "VALIDATION_SCRIPT",
+      "name": "check-quality.sh",
+      "properties": {
+        "purpose": "Paragraph structure quality analysis",
+        "metrics": ["paragraph_count", "sentence_count", "avg_sentences_per_para"],
+        "target": "3-8 sentences per paragraph"
+      }
+    },
+    {
+      "id": "requirements-checklist",
+      "type": "CHECKLIST",
+      "name": "Specification Quality Checklist",
+      "properties": {
+        "file": "checklists/requirements.md",
+        "purpose": "Validate specification completeness and quality",
+        "sections": ["Content Quality", "Requirement Completeness", "Feature Readiness"],
+        "status": "ALL_PASSED"
+      }
+    },
+    {
+      "id": "output-dir-flag-feature",
+      "type": "FEATURE",
+      "name": "Output Directory Flag",
+      "properties": {
+        "spec_id": "001-allow-the-output-directory-structure-to-be-specifi",
+        "status": "COMPLETED",
+        "implementation": "Bash CLI flag",
+        "flag": "--output-dir / -o"
+      }
+    },
+    {
+      "id": "output-dir-spec",
+      "type": "SPEC",
+      "name": "Output Directory Flag Spec",
+      "properties": {
+        "file": "spec.md",
+        "type": "Simple Feature Addition",
+        "scope": "Add CLI flag to override default output directory"
+      }
+    },
+    {
+      "id": "output-dir-implementation",
+      "type": "IMPLEMENTATION",
+      "name": "Output Directory Flag Implementation",
+      "properties": {
+        "commit": "6e8f2cb",
+        "changes": ["OUTPUT_DIR_BASE variable", "CLI argument parsing", "Help flag", "Function updates"],
+        "verification": "PASSED"
+      }
+    },
+    {
+      "id": "manual-test-plan",
+      "type": "TEST_PLAN",
+      "name": "Manual Test Plan",
+      "properties": {
+        "file": "MANUAL_TEST_PLAN.md",
+        "reason": "No automated test framework detected",
+        "sections": ["Pre-Test Setup", "Acceptance Criteria", "Functional Tests", "Non-Functional Tests"]
+      }
+    },
+    {
+      "id": "qa-report",
+      "type": "REPORT",
+      "name": "QA Validation Report",
+      "properties": {
+        "file": "qa_report.md",
+        "date": "2026-02-03",
+        "verdict": "APPROVED",
+        "subtasks_complete": "1/1",
+        "issues_found": "0"
+      }
+    },
+    {
+      "id": "gotchas",
+      "type": "DOCUMENTATION",
+      "name": "Gotchas & Pitfalls",
+      "properties": {
+        "file": "memory/gotchas.md",
+        "purpose": "Track codebase pitfalls and warnings",
+        "entries": ["Bash script vs Python CLI mismatch"]
+      }
+    },
+    {
+      "id": "speckit-commands",
+      "type": "COMMAND_SUITE",
+      "name": "SpecKit Commands",
+      "properties": {
+        "location": ".claude/commands/",
+        "commands": ["constitution", "checklist", "plan", "analyze", "clarify", "implement", "specify", "tasks"]
+      }
+    },
+    {
+      "id": "constitution-command",
+      "type": "COMMAND",
+      "name": "speckit.constitution",
+      "properties": {
+        "file": "speckit.constitution.md",
+        "purpose": "Create or update project constitution",
+        "versioning": "semantic versioning (MAJOR.MINOR.PATCH)",
+        "template": ".specify/memory/constitution.md"
+      }
+    },
+    {
+      "id": "checklist-command",
+      "type": "COMMAND",
+      "name": "speckit.checklist",
+      "properties": {
+        "file": "speckit.checklist.md",
+        "purpose": "Generate unit tests for requirements writing",
+        "concept": "Checklists test requirement quality, not implementation",
+        "max_questions": "5",
+        "traceability_minimum": "80%"
+      }
+    },
+    {
+      "id": "plan-command",
+      "type": "COMMAND",
+      "name": "speckit.plan",
+      "properties": {
+        "file": "speckit.plan.md",
+        "purpose": "Execute implementation planning workflow",
+        "phases": ["Phase 0: Research", "Phase 1: Design & Contracts"],
+        "outputs": ["research.md", "data-model.md", "contracts/", "quickstart.md"]
+      }
+    },
+    {
+      "id": "analyze-command",
+      "type": "COMMAND",
+      "name": "speckit.analyze",
+      "properties": {
+        "file": "speckit.analyze.md",
+        "purpose": "Cross-artifact consistency and quality analysis",
+        "mode": "READ-ONLY",
+        "artifacts": ["spec.md", "plan.md", "tasks.md"],
+        "detection_passes": ["Duplication", "Ambiguity", "Underspecification", "Constitution Alignment", "Coverage Gaps", "Inconsistency"]
+      }
+    },
+    {
+      "id": "clarify-command",
+      "type": "COMMAND",
+      "name": "speckit.clarify",
+      "properties": {
+        "file": "speckit.clarify.md",
+        "purpose": "Identify and reduce spec ambiguity",
+        "max_questions": "10 total, 5 per session",
+        "answer_format": "Multiple-choice or <=5 words",
+        "integration": "Incremental spec updates after each answer"
+      }
+    },
+    {
+      "id": "implement-command",
+      "type": "COMMAND",
+      "name": "speckit.implement",
+      "properties": {
+        "file": "speckit.implement.md",
+        "purpose": "Execute implementation plan from tasks.md",
+        "checklist_gate": "Validates all checklists before implementation",
+        "phases": ["Setup", "Tests", "Core", "Integration", "Polish"],
+        "progress_tracking": "Mark tasks as [X] when complete"
+      }
+    },
+    {
+      "id": "specify-command",
+      "type": "COMMAND",
+      "name": "speckit.specify",
+      "properties": {
+        "file": "speckit.specify.md",
+        "purpose": "Create or update feature specification",
+        "short_name_format": "2-4 words action-noun",
+        "clarification_limit": "3 max",
+        "validation": "Automatic checklist generation and validation"
+      }
+    },
+    {
+      "id": "tasks-command",
+      "type": "COMMAND",
+      "name": "speckit.tasks",
+      "properties": {
+        "file": "speckit.tasks.md",
+        "purpose": "Generate actionable, dependency-ordered tasks.md",
+        "organization": "By user story (US1, US2, US3...)",
+        "format": "Markdown checklist with Task IDs",
+        "tests": "Optional, only if explicitly requested"
+      }
+    },
+    {
+      "id": "transcriber-constitution",
+      "type": "CONSTITUTION",
+      "name": "DJI Transcriber Constitution",
+      "properties": {
+        "file": "constitution.md",
+        "version": "1.0.0",
+        "ratified": "2025-10-16",
+        "last_amended": "2025-10-16",
+        "principles": "5 core principles"
+      }
+    },
+    {
+      "id": "principle-pipeline-architecture",
+      "type": "PRINCIPLE",
+      "name": "Pipeline Architecture",
+      "properties": {
+        "number": "I",
+        "stages": "3 sequential stages",
+        "stage_1": "Import (audio acquisition)",
+        "stage_2": "Transcribe (speech-to-text)",
+        "stage_3": "Process (AI enhancement)",
+        "rationale": "Clear stage separation enables debugging, partial processing, recovery"
+      }
+    },
+    {
+      "id": "principle-ai-enhancement",
+      "type": "PRINCIPLE",
+      "name": "AI-Driven Enhancement",
+      "properties": {
+        "number": "II",
+        "requirement": "AI enhancement is NOT optional",
+        "output_format": "Markdown with section hierarchy",
+        "models": "Ollama with custom transcriber model",
+        "rationale": "Transform raw speech-to-text into professionally formatted documents"
+      }
+    },
+    {
+      "id": "principle-state-tracking",
+      "type": "PRINCIPLE",
+      "name": "State-Tracked File Processing",
+      "properties": {
+        "number": "III",
+        "directory_flow": "audio-unprocessed → audio-processed, text-unprocessed → text-processed",
+        "final_output": "transcripts/",
+        "operation": "Move (not copy) files",
+        "idempotency": "Re-running stages is safe",
+        "rationale": "Visual progress, prevent duplicate work, enable recovery"
+      }
+    },
+    {
+      "id": "principle-cli-first",
+      "type": "PRINCIPLE",
+      "name": "CLI-First Interface",
+      "properties": {
+        "number": "IV",
+        "execution_modes": ["Standalone script", "Sourced functions"],
+        "function_access": "Individual stage functions callable",
+        "help": "usage() function",
+        "rationale": "Enable automation, scripting, integration, flexible execution"
+      }
+    },
+    {
+      "id": "principle-error-resilience",
+      "type": "PRINCIPLE",
+      "name": "Error Resilience",
+      "properties": {
+        "number": "V",
+        "batch_behavior": "Individual file failures do not halt batch",
+        "dependency_check": "Before processing",
+        "recovery": "Partial processing recoverable",
+        "rationale": "Maximum throughput with visibility into failures"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "source": "paragraph-reformatter-feature",
+      "target": "modelfile-reformat",
+      "type": "USES",
+      "properties": {
+        "relationship": "Feature uses Modelfile for AI-driven paragraph formatting"
+      }
+    },
+    {
+      "source": "paragraph-reformatter-feature",
+      "target": "reformat-transcript-script",
+      "type": "PROVIDES",
+      "properties": {
+        "relationship": "Feature provides helper script for batch processing"
+      }
+    },
+    {
+      "source": "paragraph-reformatter-feature",
+      "target": "test-data-samples",
+      "type": "VALIDATED_BY",
+      "properties": {
+        "relationship": "Feature validated by comprehensive test suite"
+      }
+    },
+    {
+      "source": "test-data-samples",
+      "target": "sample-single",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Test suite contains single sentence test case"
+      }
+    },
+    {
+      "source": "test-data-samples",
+      "target": "sample-technical",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Test suite contains technical content test case"
+      }
+    },
+    {
+      "source": "test-data-samples",
+      "target": "sample-factual",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Test suite contains factual content test case"
+      }
+    },
+    {
+      "source": "test-data-samples",
+      "target": "sample-continuous",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Test suite contains continuous text test case"
+      }
+    },
+    {
+      "source": "test-data-samples",
+      "target": "validation-scripts",
+      "type": "VALIDATED_BY",
+      "properties": {
+        "relationship": "Test samples validated by automated scripts"
+      }
+    },
+    {
+      "source": "validation-scripts",
+      "target": "check-preservation-script",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Validation suite contains preservation check script"
+      }
+    },
+    {
+      "source": "validation-scripts",
+      "target": "check-quality-script",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Validation suite contains quality check script"
+      }
+    },
+    {
+      "source": "paragraph-reformatter-feature",
+      "target": "requirements-checklist",
+      "type": "VALIDATED_BY",
+      "properties": {
+        "relationship": "Feature validated by requirements quality checklist"
+      }
+    },
+    {
+      "source": "output-dir-flag-feature",
+      "target": "output-dir-spec",
+      "type": "SPECIFIED_BY",
+      "properties": {
+        "relationship": "Feature specified in spec.md document"
+      }
+    },
+    {
+      "source": "output-dir-flag-feature",
+      "target": "output-dir-implementation",
+      "type": "IMPLEMENTED_BY",
+      "properties": {
+        "relationship": "Feature implemented in commit 6e8f2cb"
+      }
+    },
+    {
+      "source": "output-dir-flag-feature",
+      "target": "manual-test-plan",
+      "type": "TESTED_BY",
+      "properties": {
+        "relationship": "Feature testing documented in manual test plan"
+      }
+    },
+    {
+      "source": "output-dir-flag-feature",
+      "target": "qa-report",
+      "type": "VALIDATED_BY",
+      "properties": {
+        "relationship": "Feature approved in QA validation report"
+      }
+    },
+    {
+      "source": "output-dir-implementation",
+      "target": "gotchas",
+      "type": "DOCUMENTED_IN",
+      "properties": {
+        "relationship": "Implementation adaptation documented in gotchas"
+      }
+    },
+    {
+      "source": "speckit-commands",
+      "target": "constitution-command",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Command suite contains constitution command"
+      }
+    },
+    {
+      "source": "speckit-commands",
+      "target": "checklist-command",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Command suite contains checklist command"
+      }
+    },
+    {
+      "source": "speckit-commands",
+      "target": "plan-command",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Command suite contains plan command"
+      }
+    },
+    {
+      "source": "speckit-commands",
+      "target": "analyze-command",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Command suite contains analyze command"
+      }
+    },
+    {
+      "source": "speckit-commands",
+      "target": "clarify-command",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Command suite contains clarify command"
+      }
+    },
+    {
+      "source": "speckit-commands",
+      "target": "implement-command",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Command suite contains implement command"
+      }
+    },
+    {
+      "source": "speckit-commands",
+      "target": "specify-command",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Command suite contains specify command"
+      }
+    },
+    {
+      "source": "speckit-commands",
+      "target": "tasks-command",
+      "type": "CONTAINS",
+      "properties": {
+        "relationship": "Command suite contains tasks command"
+      }
+    },
+    {
+      "source": "constitution-command",
+      "target": "transcriber-constitution",
+      "type": "MANAGES",
+      "properties": {
+        "relationship": "Command creates and updates constitution document"
+      }
+    },
+    {
+      "source": "checklist-command",
+      "target": "requirements-checklist",
+      "type": "GENERATES",
+      "properties": {
+        "relationship": "Command generates requirements quality checklists"
+      }
+    },
+    {
+      "source": "specify-command",
+      "target": "output-dir-spec",
+      "type": "GENERATES",
+      "properties": {
+        "relationship": "Command generates feature specifications"
+      }
+    },
+    {
+      "source": "tasks-command",
+      "target": "implement-command",
+      "type": "PRECEDES",
+      "properties": {
+        "relationship": "Tasks generation must complete before implementation"
+      }
+    },
+    {
+      "source": "clarify-command",
+      "target": "plan-command",
+      "type": "PRECEDES",
+      "properties": {
+        "relationship": "Clarification should complete before planning"
+      }
+    },
+    {
+      "source": "analyze-command",
+      "target": "implement-command",
+      "type": "VALIDATES_BEFORE",
+      "properties": {
+        "relationship": "Analyze validates artifacts before implementation"
+      }
+    },
+    {
+      "source": "transcriber-constitution",
+      "target": "principle-pipeline-architecture",
+      "type": "DEFINES",
+      "properties": {
+        "relationship": "Constitution defines pipeline architecture principle"
+      }
+    },
+    {
+      "source": "transcriber-constitution",
+      "target": "principle-ai-enhancement",
+      "type": "DEFINES",
+      "properties": {
+        "relationship": "Constitution defines AI enhancement principle"
+      }
+    },
+    {
+      "source": "transcriber-constitution",
+      "target": "principle-state-tracking",
+      "type": "DEFINES",
+      "properties": {
+        "relationship": "Constitution defines state tracking principle"
+      }
+    },
+    {
+      "source": "transcriber-constitution",
+      "target": "principle-cli-first",
+      "type": "DEFINES",
+      "properties": {
+        "relationship": "Constitution defines CLI-first interface principle"
+      }
+    },
+    {
+      "source": "transcriber-constitution",
+      "target": "principle-error-resilience",
+      "type": "DEFINES",
+      "properties": {
+        "relationship": "Constitution defines error resilience principle"
+      }
+    },
+    {
+      "source": "principle-pipeline-architecture",
+      "target": "principle-state-tracking",
+      "type": "COMPLEMENTS",
+      "properties": {
+        "relationship": "Pipeline stages align with state-tracked directories"
+      }
+    },
+    {
+      "source": "principle-ai-enhancement",
+      "target": "paragraph-reformatter-feature",
+      "type": "EXEMPLIFIED_BY",
+      "properties": {
+        "relationship": "Paragraph reformatter is an example of AI enhancement"
+      }
+    },
+    {
+      "source": "implement-command",
+      "target": "requirements-checklist",
+      "type": "REQUIRES",
+      "properties": {
+        "relationship": "Implementation gates on checklist completion"
+      }
+    }
+  ]
+}

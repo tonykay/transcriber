@@ -101,3 +101,54 @@ def test_ollama_classify_strips_ansi_escapes() -> None:
 
     assert "\x1b" not in result.stdout
     assert result.stdout == '{"intent": "todo"}'
+
+
+def test_ollama_process_strips_thinking_trace(tmp_path) -> None:
+    """process() should strip a leaked reasoning trace from models with no think-off switch."""
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("Raw transcript text.")
+    output_file = tmp_path / "output.md"
+
+    thinking_output = (
+        "Thinking...\n"
+        "The user wants formatted markdown. Let's do that.\n"
+        "...done thinking.\n\n"
+        "The formatted result."
+    )
+
+    mock_result = MagicMock()
+    mock_result.stdout = thinking_output
+    mock_result.returncode = 0
+
+    provider = OllamaProvider(model="test-model")
+
+    with patch("subprocess.run", return_value=mock_result):
+        result = provider.process(input_file, output_file)
+
+    assert result.success
+    content = output_file.read_text()
+    assert "Thinking..." not in content
+    assert "done thinking" not in content
+    assert content == "The formatted result."
+
+
+def test_ollama_classify_strips_thinking_trace() -> None:
+    """classify() should strip a leaked reasoning trace from models with no think-off switch."""
+    thinking_output = (
+        "Thinking...\n"
+        "Working out the intent.\n"
+        "...done thinking.\n\n"
+        '{"intent": "todo"}'
+    )
+
+    mock_result = MagicMock()
+    mock_result.stdout = thinking_output
+    mock_result.returncode = 0
+
+    provider = OllamaProvider(model="test-model")
+
+    with patch("subprocess.run", return_value=mock_result):
+        result = provider.classify("Analyze this text")
+
+    assert "Thinking..." not in result.stdout
+    assert result.stdout == '{"intent": "todo"}'

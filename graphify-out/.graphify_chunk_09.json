@@ -1,0 +1,259 @@
+{
+  "entities": [
+    {
+      "id": "test_suite",
+      "type": "test_infrastructure",
+      "name": "Test Suite",
+      "attributes": {
+        "test_count": 118,
+        "status": "complete"
+      }
+    },
+    {
+      "id": "dev_commands",
+      "type": "tooling",
+      "name": "Development Commands",
+      "attributes": {
+        "package_manager": "uv",
+        "available_commands": [
+          "install",
+          "pytest",
+          "transcriber",
+          "mypy",
+          "ruff"
+        ]
+      }
+    },
+    {
+      "id": "design_docs",
+      "type": "documentation",
+      "name": "Design Documentation",
+      "attributes": {
+        "specs_location": "docs/superpowers/specs/",
+        "plans_location": "docs/superpowers/plans/"
+      }
+    },
+    {
+      "id": "voice_intent_routing_spec",
+      "type": "specification",
+      "name": "Voice Intent Routing Design",
+      "attributes": {
+        "date": "2026-03-30",
+        "path": "docs/superpowers/specs/2026-03-30-voice-intent-routing-design.md",
+        "status": "merged_to_main"
+      }
+    },
+    {
+      "id": "voice_intent_routing_plan",
+      "type": "implementation_plan",
+      "name": "Voice Intent Routing Implementation",
+      "attributes": {
+        "date": "2026-03-30",
+        "path": "docs/superpowers/plans/2026-03-30-voice-intent-routing.md",
+        "status": "completed"
+      }
+    },
+    {
+      "id": "future_integrations",
+      "type": "roadmap",
+      "name": "External Integrations",
+      "attributes": {
+        "planned_integrations": [
+          "Apple Reminders",
+          "Todoist",
+          "GitHub Issues",
+          "Obsidian vault"
+        ]
+      }
+    },
+    {
+      "id": "future_enhancements",
+      "type": "roadmap",
+      "name": "Future Enhancements",
+      "attributes": {
+        "items": [
+          "Smaller/faster model for LLM classification fallback",
+          "Quick capture mode for short voice notes",
+          "Tagging UI for manual classification failures",
+          "Cross-reference linking between related recordings"
+        ]
+      }
+    },
+    {
+      "id": "legacy_bash_implementation",
+      "type": "deprecated_code",
+      "name": "Legacy Bash Implementation",
+      "attributes": {
+        "path": "legacy/transcriber-bash.sh",
+        "status": "preserved"
+      }
+    },
+    {
+      "id": "user_memory_intent_routing",
+      "type": "project_memory",
+      "name": "Intent Routing Status Memory",
+      "attributes": {
+        "status": "merged_to_main",
+        "fix": "LLM fallback hang fixed with 60s timeout",
+        "source": "MEMORY.md"
+      }
+    },
+    {
+      "id": "user_memory_llm_optimization",
+      "type": "project_memory",
+      "name": "LLM Optimization Status Memory",
+      "attributes": {
+        "status": "gemma4 rejected, qwen3.5 next",
+        "feature": "reprocess command added",
+        "source": "MEMORY.md"
+      }
+    },
+    {
+      "id": "user_memory_tags_format",
+      "type": "user_preference",
+      "name": "Tags Format Preference",
+      "attributes": {
+        "format": "# prefix with underscores",
+        "example": "#claude_code",
+        "source": "MEMORY.md"
+      }
+    },
+    {
+      "id": "user_memory_article_ideas",
+      "type": "user_preference",
+      "name": "Article Ideas Storage Preference",
+      "attributes": {
+        "preference": "individual files in directories",
+        "reason": "multi-session artifacts need individual files, not append",
+        "source": "MEMORY.md"
+      }
+    },
+    {
+      "id": "user_profile",
+      "type": "user_context",
+      "name": "User Profile",
+      "attributes": {
+        "role": "Voice capture builder",
+        "hardware": "DJI MIC 2, Apple Silicon 128GB",
+        "tools": "Obsidian",
+        "source": "MEMORY.md"
+      }
+    },
+    {
+      "id": "reprocess_command",
+      "type": "cli_command",
+      "name": "Reprocess Command",
+      "attributes": {
+        "purpose": "re-running LLM on a single file",
+        "status": "added",
+        "source": "git commits"
+      }
+    },
+    {
+      "id": "date_tags_feature",
+      "type": "feature",
+      "name": "Date Tags",
+      "attributes": {
+        "tags": ["#transcript", "#yyyy", "#yyyy-mm"],
+        "scope": "all templates",
+        "source": "git commits"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "source": "test_suite",
+      "target": "transcriber_project",
+      "type": "validates",
+      "attributes": {
+        "coverage": "full"
+      }
+    },
+    {
+      "source": "dev_commands",
+      "target": "transcriber_project",
+      "type": "supports_development",
+      "attributes": {}
+    },
+    {
+      "source": "voice_intent_routing_spec",
+      "target": "design_docs",
+      "type": "part_of",
+      "attributes": {}
+    },
+    {
+      "source": "voice_intent_routing_plan",
+      "target": "design_docs",
+      "type": "part_of",
+      "attributes": {}
+    },
+    {
+      "source": "voice_intent_routing_plan",
+      "target": "voice_intent_routing_spec",
+      "type": "implements",
+      "attributes": {}
+    },
+    {
+      "source": "future_integrations",
+      "target": "transcriber_project",
+      "type": "planned_for",
+      "attributes": {}
+    },
+    {
+      "source": "future_enhancements",
+      "target": "transcriber_project",
+      "type": "planned_for",
+      "attributes": {}
+    },
+    {
+      "source": "legacy_bash_implementation",
+      "target": "transcriber_project",
+      "type": "predecessor_of",
+      "attributes": {}
+    },
+    {
+      "source": "user_memory_intent_routing",
+      "target": "voice_intent_routing_plan",
+      "type": "tracks_status",
+      "attributes": {}
+    },
+    {
+      "source": "user_memory_llm_optimization",
+      "target": "llm_module",
+      "type": "tracks_status",
+      "attributes": {}
+    },
+    {
+      "source": "user_memory_tags_format",
+      "target": "frontmatter_module",
+      "type": "constrains",
+      "attributes": {}
+    },
+    {
+      "source": "user_memory_article_ideas",
+      "target": "dispatch_module",
+      "type": "constrains",
+      "attributes": {}
+    },
+    {
+      "source": "reprocess_command",
+      "target": "cli_module",
+      "type": "extends",
+      "attributes": {}
+    },
+    {
+      "source": "date_tags_feature",
+      "target": "templates_module",
+      "type": "enhances",
+      "attributes": {}
+    },
+    {
+      "source": "dev_commands",
+      "target": "test_suite",
+      "type": "executes",
+      "attributes": {
+        "command": "uv run pytest"
+      }
+    }
+  ]
+}
